@@ -243,9 +243,11 @@ function Whiteboard() {
               <img
                 src={logoUrl}
                 alt=""
-                width="40"
-                height="40"
-                style={{ borderRadius: "var(--wa-border-radius-m)" }}
+                style={{
+                  width: "var(--wa-space-xl)",
+                  height: "var(--wa-space-xl)",
+                  borderRadius: "var(--wa-border-radius-m)",
+                }}
               />
               Queerboard
             </h1>
