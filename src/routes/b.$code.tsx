@@ -9,6 +9,7 @@ import {
   WaSpinner,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
+import { PrivacyBadge } from "@/components/PrivacyBadge";
 import { Whiteboard } from "@/components/Whiteboard";
 import type { Board } from "@/lib/board-service";
 import { getBoardByCode, normalizeCode } from "@/lib/board-service";
