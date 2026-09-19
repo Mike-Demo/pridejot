@@ -441,8 +441,29 @@ function Whiteboard() {
             <WaIcon name="compress" aria-hidden="true" />
             Exit
           </button>
+          <div className="pride-present-qr wa-stack wa-gap-xs wa-align-items-center">
+            <WaQrCode
+              value={boardUrl || "https://pridejot.lovable.app"}
+              size={140}
+              label="QR code linking to this whiteboard"
+            />
+            <span className="wa-body-s">Scan to join</span>
+          </div>
         </div>
       ) : null}
+
+      <WaDialog ref={inviteDialogRef} open={inviteOpen} label="Invite the room" light-dismiss>
+        <div className="wa-stack wa-gap-m wa-align-items-center">
+          <WaQrCode
+            value={boardUrl || "https://pridejot.lovable.app"}
+            size={220}
+            label="QR code linking to this whiteboard"
+          />
+          <p className="wa-body-m" style={{ margin: 0 }}>
+            Scan to open this board: {boardUrl}
+          </p>
+        </div>
+      </WaDialog>
     </WaPage>
   );
 }
