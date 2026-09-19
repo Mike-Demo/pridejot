@@ -251,6 +251,10 @@ function Whiteboard() {
               <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
               Add idea
             </WaButton>
+            <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
+              <WaIcon slot="start" name="display" aria-hidden="true" />
+              Present
+            </WaButton>
             <WaButton appearance="outlined" variant="danger" size="l" onClick={clearBoard}>
               <WaIcon slot="start" name="eraser" aria-hidden="true" />
               Clear board
@@ -359,6 +363,56 @@ function Whiteboard() {
       <div slot="footer">
         <SiteFooter />
       </div>
+
+      {presenting ? (
+        <div
+          className="pride-present"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Presentation mode"
+        >
+          <div className="pride-rainbow-bar pride-present-bar" aria-hidden="true" />
+          <div className="pride-present-board">
+            {notes.map((note) => (
+              <div
+                key={note.id}
+                className="pride-note pride-present-note"
+                style={{
+                  left: note.x * PRESENT_SCALE,
+                  top: note.y * PRESENT_SCALE,
+                  transform: `rotate(${note.rotation}deg)`,
+                  backgroundColor: note.color.bg,
+                  color: note.color.ink,
+                }}
+                role="article"
+                aria-label={note.text ? `Idea: ${note.text}` : "Empty idea note"}
+              >
+                <div className="pride-note-text">{note.text}</div>
+                {note.hearts > 0 ? (
+                  <div className="pride-present-hearts">
+                    <WaIcon name="heart" aria-hidden="true" />
+                    {note.hearts}
+                  </div>
+                ) : null}
+              </div>
+            ))}
+            {notes.length === 0 ? (
+              <div className="pride-empty">
+                <p className="wa-body-l">The board is empty.</p>
+              </div>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            className="pride-present-exit"
+            onClick={exitPresent}
+            aria-label="Exit presentation mode"
+          >
+            <WaIcon name="compress" aria-hidden="true" />
+            Exit
+          </button>
+        </div>
+      ) : null}
     </WaPage>
   );
 }
