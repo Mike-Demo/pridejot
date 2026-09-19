@@ -46,3 +46,14 @@ a room 404.
 `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, and
 `VITE_SUPABASE_PROJECT_ID` are inlined at build time. Only the publishable key is
 used; no secrets are present in the bundle.
+
+## Troubleshooting
+
+If the Spacefast build fails with "Unsupported platform features were detected"
+mentioning Cloudflare Worker entrypoints: the repo keeps a Cloudflare config
+(`wrangler.dev.jsonc`, deliberately not named `wrangler.jsonc`) for the Lovable
+preview build only — the static build never uses it. If Spacefast still flags it
+(for example via the `@cloudflare/vite-plugin` dependency), enable the "allow
+unsupported platform features" option in the Spacefast project's build settings
+(the equivalent of `--allow-unsupported-platform-features`). The worker is then
+skipped and the static output in `dist/client` ships complete.
