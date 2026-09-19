@@ -214,7 +214,7 @@ function Whiteboard() {
             </span>
           </div>
           <div className="wa-cluster wa-gap-s wa-align-items-center">
-            <WaButton variant="neutral" appearance="filled" size="l" onClick={addNoteFromButton}>
+            <WaButton variant="brand" size="l" onClick={addNoteFromButton}>
               <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
               Add idea
             </WaButton>
