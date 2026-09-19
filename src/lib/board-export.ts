@@ -169,7 +169,7 @@ export async function exportBoardAsPdf(board: HTMLElement): Promise<void> {
     canvas.toDataURL("image/jpeg", 0.92),
     "JPEG",
     (pageWidth - width) / 2,
-    (pageHeight - height) / 2,
+    PDF_MARGIN_MM,
     width,
     height,
   );
