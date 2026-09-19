@@ -5,8 +5,10 @@ import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent }
 import {
   SiteFooter,
   WaButton,
+  WaDialog,
   WaIcon,
   WaPage,
+  WaQrCode,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
@@ -106,7 +108,10 @@ function Whiteboard() {
   const [selectedColor, setSelectedColor] = useState<NoteColor>(NOTE_COLORS[6]!);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [presenting, setPresenting] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [boardUrl, setBoardUrl] = useState("");
   const boardRef = useRef<HTMLDivElement>(null);
+  const inviteDialogRef = useRef<HTMLElement>(null);
   const dragRef = useRef<{
     id: number;
     offsetX: number;
