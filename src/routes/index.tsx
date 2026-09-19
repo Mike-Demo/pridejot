@@ -380,7 +380,7 @@ function Whiteboard() {
                 style={{
                   left: note.x * PRESENT_SCALE,
                   top: note.y * PRESENT_SCALE,
-                  transform: `rotate(${note.rotation}deg)`,
+                  transform: `rotate(${note.rotation}deg) scale(${PRESENT_SCALE})`,
                   backgroundColor: note.color.bg,
                   color: note.color.ink,
                 }}

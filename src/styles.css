@@ -162,11 +162,9 @@ body {
   background-size: var(--wa-space-xl) var(--wa-space-xl);
 }
 
+/* Present-mode notes reuse the base note size; enlargement comes from the
+   scale transform applied inline, so no raw size overrides live here. */
 .pride-present-note {
-  width: 24rem;
-  min-height: 14rem;
-  padding: var(--wa-space-m);
-  font-size: var(--wa-font-size-xl);
   cursor: default;
 }
 
