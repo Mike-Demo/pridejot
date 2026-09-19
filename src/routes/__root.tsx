@@ -7,6 +7,12 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
+import { WEB_AWESOME_HTML_CLASSES } from "@/design-system/font-awsome-web-awesome-171158/webawesome/setup";
+import {
+  FONT_AWESOME_STYLE_URL,
+  WEB_AWESOME_STYLE_URL,
+} from "@/design-system/font-awsome-web-awesome-171158/webawesome/cdn";
+import themeCss from "@/design-system/font-awsome-web-awesome-171158/webawesome/theme.css?url";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -14,21 +20,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Queerboard" },
+      {
+        name: "description",
+        content:
+          "A pride-themed group idea whiteboard for the conference room — everyone adds sticky notes, drags them around, and votes. Nothing is saved.",
+      },
+      { name: "author", content: "MikeDemo" },
+      { property: "og:title", content: "Queerboard" },
+      {
+        property: "og:description",
+        content:
+          "A pride-themed group idea whiteboard for the conference room — everyone adds sticky notes, drags them around, and votes. Nothing is saved.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
-      { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.12.0/dist/styles/webawesome.css" },
-      { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css" },
-      { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.12.0/dist/styles/utilities/fouce.css" },
+      { rel: "stylesheet", href: WEB_AWESOME_STYLE_URL },
+      { rel: "stylesheet", href: FONT_AWESOME_STYLE_URL },
+      { rel: "stylesheet", href: themeCss },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
@@ -37,7 +50,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={WEB_AWESOME_HTML_CLASSES}>
       <head>
         <HeadContent />
       </head>
