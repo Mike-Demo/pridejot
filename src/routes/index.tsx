@@ -1,544 +1,168 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import type { FormEvent } from "react";
 
 import {
   SiteFooter,
   WaButton,
   WaCallout,
-  WaDialog,
-  WaDropdown,
-  WaDropdownItem,
+  WaCard,
   WaIcon,
+  WaInput,
   WaPage,
-  WaQrCode,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
-import { exportBoardAsPdf, exportBoardAsPng } from "@/lib/board-export";
+import { createBoard, getBoardByCode, normalizeCode } from "@/lib/board-service";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Queerboard — Pride idea whiteboard" },
+      { title: "Queerboard — shared pride idea whiteboard" },
       {
         name: "description",
         content:
-          "A pride-themed group idea whiteboard for the conference room. Double-click anywhere to drop a sticky note, drag ideas around, and vote with hearts. Nothing is saved — the board resets when you leave.",
+          "Start a pride-themed idea whiteboard for your meeting room, then let everyone scan a QR code to add sticky notes and hearts from their phones in real time.",
       },
-      { property: "og:title", content: "Queerboard — Pride idea whiteboard" },
+      { property: "og:title", content: "Queerboard — shared pride idea whiteboard" },
       {
         property: "og:description",
         content:
-          "A pride-themed group idea whiteboard for the conference room. Double-click anywhere to drop a sticky note, drag ideas around, and vote with hearts.",
+          "Start a shared idea board for the room, invite phones with a QR code, and watch ideas and hearts appear live.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Whiteboard,
+  component: StartScreen,
 });
 
-/* Pride palette — explicit brand colors requested for this board. */
-interface NoteColor {
-  readonly name: string;
-  readonly bg: string;
-  readonly ink: string;
-}
+function StartScreen() {
+  const navigate = useNavigate();
+  const [starting, setStarting] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [code, setCode] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
 
-const NOTE_COLORS: readonly NoteColor[] = [
-  { name: "Red", bg: "#f6a9a2", ink: "#571311" },
-  { name: "Orange", bg: "#f9cfa0", ink: "#5c3511" },
-  { name: "Yellow", bg: "#f9e9a0", ink: "#57490e" },
-  { name: "Green", bg: "#b3e3b1", ink: "#17491d" },
-  { name: "Blue", bg: "#a9c9f0", ink: "#173c6b" },
-  { name: "Purple", bg: "#d5b9ea", ink: "#3f2260" },
-  { name: "Trans pink", bg: "#f4c3d6", ink: "#6b2140" },
-  { name: "Trans blue", bg: "#b7e2f2", ink: "#124c63" },
-  { name: "Brown", bg: "#d9bda6", ink: "#4b2e1b" },
-  { name: "Black stripe", bg: "#c9ccd4", ink: "#20222a" },
-];
-
-interface Note {
-  readonly id: number;
-  readonly x: number;
-  readonly y: number;
-  readonly rotation: number;
-  readonly color: NoteColor;
-  readonly text: string;
-  readonly hearts: number;
-}
-
-let nextId = 100;
-
-const NOTE_WIDTH = 240;
-const NOTE_HALF = NOTE_WIDTH / 2;
-
-/** Presentation mode enlarges notes so a conference-room screen stays readable. */
-const PRESENT_SCALE = 1.6;
-
-const seedNotes: Note[] = [
-  {
-    id: 1,
-    x: 60,
-    y: 90,
-    rotation: -3,
-    color: NOTE_COLORS[6]!,
-    text: "Welcome to Queerboard! Double-click anywhere to add an idea.",
-    hearts: 3,
-  },
-  {
-    id: 2,
-    x: 360,
-    y: 140,
-    rotation: 2,
-    color: NOTE_COLORS[2]!,
-    text: "Drag notes around to cluster ideas with your team.",
-    hearts: 1,
-  },
-  {
-    id: 3,
-    x: 660,
-    y: 80,
-    rotation: -1.5,
-    color: NOTE_COLORS[4]!,
-    text: "Tap the heart on a note to vote it up. Nothing is saved.",
-    hearts: 5,
-  },
-];
-
-function Whiteboard() {
-  const [notes, setNotes] = useState<Note[]>(seedNotes);
-  const [selectedColor, setSelectedColor] = useState<NoteColor>(NOTE_COLORS[6]!);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [presenting, setPresenting] = useState(false);
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const [boardUrl, setBoardUrl] = useState("");
-  const [exporting, setExporting] = useState(false);
-  const [exportError, setExportError] = useState<string | null>(null);
-  const boardRef = useRef<HTMLDivElement>(null);
-  const inviteDialogRef = useRef<HTMLElement>(null);
-  const dragRef = useRef<{
-    id: number;
-    offsetX: number;
-    offsetY: number;
-    moved: boolean;
-  } | null>(null);
-
-  const addNoteAt = (clientX: number, clientY: number) => {
-    const board = boardRef.current;
-    if (!board) return;
-    const rect = board.getBoundingClientRect();
-    const note: Note = {
-      id: nextId++,
-      x: Math.max(0, clientX - rect.left - NOTE_HALF),
-      y: Math.max(0, clientY - rect.top - 40),
-      rotation: Math.round((Math.random() * 6 - 3) * 10) / 10,
-      color: selectedColor,
-      text: "",
-      hearts: 0,
-    };
-    setNotes((prev) => [...prev, note]);
-    setEditingId(note.id);
-  };
-
-  const addNoteFromButton = () => {
-    const board = boardRef.current;
-    if (!board) return;
-    const rect = board.getBoundingClientRect();
-    addNoteAt(
-      rect.left + rect.width / 2 + (Math.random() * 160 - 80),
-      rect.top + rect.height / 2 + (Math.random() * 160 - 80),
-    );
-  };
-
-  const onBoardDoubleClick = (event: ReactMouseEvent<HTMLDivElement>) => {
-    if ((event.target as HTMLElement).closest(".pride-note")) return;
-    addNoteAt(event.clientX, event.clientY);
-  };
-
-  const onNotePointerDown = (event: ReactPointerEvent<HTMLDivElement>, note: Note) => {
-    if (editingId === note.id) return;
-    if ((event.target as HTMLElement).closest("button, textarea")) return;
-    dragRef.current = {
-      id: note.id,
-      offsetX: event.clientX - note.x,
-      offsetY: event.clientY - note.y,
-      moved: false,
-    };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  };
-
-  const onNotePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
-    if (!drag) return;
-    drag.moved = true;
-    const board = boardRef.current;
-    const rect = board?.getBoundingClientRect();
-    const maxX = rect ? rect.width - NOTE_WIDTH : Number.POSITIVE_INFINITY;
-    const maxY = rect ? rect.height - 60 : Number.POSITIVE_INFINITY;
-    const x = Math.min(Math.max(0, event.clientX - drag.offsetX), Math.max(0, maxX));
-    const y = Math.min(Math.max(0, event.clientY - drag.offsetY), Math.max(0, maxY));
-    setNotes((prev) =>
-      prev.map((n) => (n.id === drag.id ? { ...n, x, y } : n)),
-    );
-  };
-
-  const onNotePointerUp = () => {
-    dragRef.current = null;
-  };
-
-  const addHeart = (id: number) => {
-    setNotes((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, hearts: n.hearts + 1 } : n)),
-    );
-  };
-
-  const removeNote = (id: number) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id));
-    setEditingId((current) => (current === id ? null : current));
-  };
-
-  const updateText = (id: number, text: string) => {
-    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, text } : n)));
-  };
-
-  const clearBoard = () => {
-    setNotes([]);
-    setEditingId(null);
-  };
-
-  const runExport = async (format: "png" | "pdf") => {
-    /* Always capture the editor board: the presentation board is scaled and
-       clipped to the screen, which would cut notes off in the export. */
-    const board = boardRef.current;
-    if (!board) return;
-    setExportError(null);
-    setExporting(true);
-    setEditingId(null);
+  const startBoard = async () => {
+    setMessage(null);
+    setStarting(true);
     try {
-      if (format === "png") {
-        await exportBoardAsPng(board);
-      } else {
-        await exportBoardAsPdf(board);
-      }
+      const board = await createBoard();
+      await navigate({ to: "/b/$code", params: { code: board.code } });
     } catch {
-      setExportError("Sorry, that export didn't work. Please try again.");
+      setMessage("Couldn't start a new board. Please try again.");
     } finally {
-      setExporting(false);
+      setStarting(false);
     }
   };
 
-  const exitPresent = () => {
-    setPresenting(false);
-    if (document.fullscreenElement) {
-      void document.exitFullscreen().catch(() => undefined);
+  const joinBoard = async (event: FormEvent) => {
+    event.preventDefault();
+    const wanted = normalizeCode(code);
+    if (!wanted) {
+      setMessage("Enter the room code shown on the meeting-room screen.");
+      return;
+    }
+    setMessage(null);
+    setJoining(true);
+    try {
+      const board = await getBoardByCode(wanted);
+      if (!board) {
+        setMessage(`No live board with the code ${wanted}. Check the code and try again.`);
+        return;
+      }
+      await navigate({ to: "/b/$code", params: { code: board.code } });
+    } catch {
+      setMessage("Couldn't look up that code. Please try again.");
+    } finally {
+      setJoining(false);
     }
   };
-
-  const enterPresent = () => {
-    setEditingId(null);
-    setPresenting(true);
-    void document.documentElement.requestFullscreen?.().catch(() => undefined);
-  };
-
-  useEffect(() => {
-    setBoardUrl(window.location.origin + window.location.pathname);
-  }, []);
-
-  useEffect(() => {
-    const dialog = inviteDialogRef.current;
-    if (!dialog) return;
-    const onHide = () => setInviteOpen(false);
-    dialog.addEventListener("wa-hide", onHide);
-    return () => dialog.removeEventListener("wa-hide", onHide);
-  }, []);
-
-  /* The wa-dialog `open` boolean must be set as a property — React sets the
-     wrapper's emitted empty-string attribute back to falsy on the element. */
-  useEffect(() => {
-    const dialog = inviteDialogRef.current as (HTMLElement & { open: boolean }) | null;
-    if (dialog) dialog.open = inviteOpen;
-  }, [inviteOpen]);
-
-  useEffect(() => {
-    if (!presenting) return;
-    const onFullscreenChange = () => {
-      if (!document.fullscreenElement) setPresenting(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") exitPresent();
-    };
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [presenting]);
-
-  const draggingId = dragRef.current?.id ?? null;
 
   return (
     <WaPage className="wa-cloak">
       <WebAwesomeLoader />
       <div className="pride-rainbow-bar" slot="subheader" aria-hidden="true" />
 
-      <div slot="header" className="wa-stack wa-gap-s wa-padding-m">
-        <div className="wa-split wa-gap-m wa-align-items-center">
-          <div className="wa-cluster wa-gap-m wa-align-items-center">
-            <h1
-              className="wa-heading-l wa-cluster wa-gap-s wa-align-items-center"
-              style={{ margin: 0 }}
-            >
-              <img
-                src={logoUrl}
-                alt=""
-                style={{
-                  width: "var(--wa-space-xl)",
-                  height: "var(--wa-space-xl)",
-                  borderRadius: "var(--wa-border-radius-m)",
-                }}
-              />
-              Queerboard
-            </h1>
-            <span className="wa-body-s" style={{ color: "var(--wa-color-neutral-on-quiet)" }}>
-              One shared wall of ideas for the whole room — nothing is saved.
-            </span>
-          </div>
-          <div className="wa-cluster wa-gap-s wa-align-items-center">
-            <WaButton variant="brand" size="l" onClick={addNoteFromButton}>
-              <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
-              Add idea
-            </WaButton>
-            <WaButton appearance="outlined" variant="neutral" size="l" onClick={() => setInviteOpen(true)}>
-              <WaIcon slot="start" name="qrcode" aria-hidden="true" />
-              Invite
-            </WaButton>
-            <WaDropdown>
-              <WaButton slot="trigger" appearance="outlined" variant="neutral" size="l" with-caret loading={exporting}>
-                <WaIcon slot="start" name="download" aria-hidden="true" />
-                Export
+      <div className="wa-stack wa-gap-xl wa-align-items-center wa-padding-2xl">
+        <h1
+          className="wa-heading-2xl wa-cluster wa-gap-s wa-align-items-center"
+          style={{ margin: 0 }}
+        >
+          <img
+            src={logoUrl}
+            alt=""
+            style={{
+              width: "var(--wa-space-2xl)",
+              height: "var(--wa-space-2xl)",
+              borderRadius: "var(--wa-border-radius-m)",
+            }}
+          />
+          Queerboard
+        </h1>
+        <p className="wa-body-l" style={{ margin: 0 }}>
+          A pride-themed idea wall for the conference room. Start a board, put it on the big screen,
+          and everyone in the room can add ideas and hearts from their phones.
+        </p>
+
+        <div className="wa-grid wa-gap-l">
+          <WaCard>
+            <div className="wa-stack wa-gap-m">
+              <h2 className="wa-heading-m" style={{ margin: 0 }}>
+                Start a new board
+              </h2>
+              <p className="wa-body-m" style={{ margin: 0 }}>
+                You'll get a short room code and a QR code for the room to scan. Boards close on
+                their own 24 hours later.
+              </p>
+              <WaButton
+                variant="brand"
+                size="l"
+                loading={starting}
+                onClick={() => void startBoard()}
+              >
+                <WaIcon slot="start" name="plus" aria-hidden="true" />
+                Start a new board
               </WaButton>
-              <WaDropdownItem onClick={() => void runExport("png")}>
-                <WaIcon slot="icon" name="image" aria-hidden="true" />
-                Save as image (PNG)
-              </WaDropdownItem>
-              <WaDropdownItem onClick={() => void runExport("pdf")}>
-                <WaIcon slot="icon" name="file-pdf" aria-hidden="true" />
-                Save as PDF
-              </WaDropdownItem>
-            </WaDropdown>
-            <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
-              <WaIcon slot="start" name="display" aria-hidden="true" />
-              Present
-            </WaButton>
-            <WaButton appearance="outlined" variant="danger" size="l" onClick={clearBoard}>
-              <WaIcon slot="start" name="eraser" aria-hidden="true" />
-              Clear board
-            </WaButton>
-          </div>
-        </div>
-        <div className="wa-cluster wa-gap-s wa-align-items-center">
-          <span className="wa-body-s" style={{ color: "var(--wa-color-neutral-on-quiet)" }}>
-            Note color:
-          </span>
-          <div className="wa-cluster wa-gap-2xs" role="group" aria-label="Note color">
-            {NOTE_COLORS.map((color) => (
-              <button
-                key={color.name}
-                type="button"
-                className="pride-swatch"
-                style={{ backgroundColor: color.bg }}
-                title={`${color.name} notes`}
-                aria-label={`Use ${color.name} notes`}
-                aria-pressed={selectedColor.name === color.name}
-                onClick={() => setSelectedColor(color)}
+            </div>
+          </WaCard>
+
+          <WaCard>
+            <form className="wa-stack wa-gap-m" onSubmit={(event) => void joinBoard(event)}>
+              <h2 className="wa-heading-m" style={{ margin: 0 }}>
+                Join with a code
+              </h2>
+              <p className="wa-body-m" style={{ margin: 0 }}>
+                Type the room code shown on the meeting-room screen.
+              </p>
+              <WaInput
+                label="Room code"
+                placeholder="ABC234"
+                autoCapitalize="characters"
+                autoComplete="off"
+                value={code}
+                onInput={(event) => setCode((event.target as HTMLInputElement).value)}
               />
-            ))}
-          </div>
+              <WaButton type="submit" appearance="outlined" variant="neutral" size="l" loading={joining}>
+                <WaIcon slot="start" name="arrow-right" aria-hidden="true" />
+                Join board
+              </WaButton>
+            </form>
+          </WaCard>
         </div>
-        {exportError ? (
-          <WaCallout variant="danger">
+
+        {message ? (
+          <WaCallout variant="warning">
             <WaIcon slot="icon" name="triangle-exclamation" aria-hidden="true" />
-            {exportError}
+            {message}
           </WaCallout>
         ) : null}
-      </div>
-
-      <div
-        ref={boardRef}
-        className="pride-board"
-        onDoubleClick={onBoardDoubleClick}
-        aria-label="Idea board"
-      >
-        {notes.length === 0 ? (
-          <div className="pride-empty">
-            <div className="wa-stack wa-gap-s">
-              <WaIcon name="hand-pointer" style={{ fontSize: "var(--wa-font-size-3xl)" }} aria-hidden="true" />
-              <p className="wa-body-l">The board is empty — double-click anywhere to drop the first idea.</p>
-            </div>
-          </div>
-        ) : null}
-
-        {notes.map((note) => (
-          <div
-            key={note.id}
-            className="pride-note"
-            data-dragging={draggingId === note.id}
-            style={{
-              left: note.x,
-              top: note.y,
-              transform: `rotate(${note.rotation}deg)`,
-              backgroundColor: note.color.bg,
-              color: note.color.ink,
-            }}
-            onPointerDown={(event) => onNotePointerDown(event, note)}
-            onPointerMove={onNotePointerMove}
-            onPointerUp={onNotePointerUp}
-            onDoubleClick={() => setEditingId(note.id)}
-            role="article"
-            aria-label={note.text ? `Idea: ${note.text}` : "Empty idea note"}
-          >
-            {editingId === note.id ? (
-              <textarea
-                className="pride-note-textarea"
-                autoFocus
-                placeholder="Type your idea…"
-                value={note.text}
-                onChange={(event) => updateText(note.id, event.target.value)}
-                onBlur={() => setEditingId(null)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") setEditingId(null);
-                }}
-                aria-label="Edit idea"
-              />
-            ) : (
-              <div className="pride-note-text">
-                {note.text || (
-                  <span style={{ opacity: 0.6 }}>Double-click to write…</span>
-                )}
-              </div>
-            )}
-
-            <div className="pride-note-actions">
-              <button
-                type="button"
-                className="pride-note-icon-btn"
-                onClick={() => addHeart(note.id)}
-                aria-label={`Vote for this idea (${note.hearts} votes)`}
-              >
-                <WaIcon name="heart" aria-hidden="true" />
-                {note.hearts}
-              </button>
-              <button
-                type="button"
-                className="pride-note-icon-btn"
-                data-export-hide
-                onClick={() => removeNote(note.id)}
-                aria-label="Remove this idea"
-              >
-                <WaIcon name="trash" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        ))}
       </div>
 
       <div slot="footer">
         <SiteFooter />
       </div>
-
-      {presenting ? (
-        <div
-          className="pride-present"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Presentation mode"
-        >
-          <div className="pride-rainbow-bar pride-present-bar" aria-hidden="true" />
-          <div className="pride-present-board">
-            {notes.map((note) => (
-              <div
-                key={note.id}
-                className="pride-note pride-present-note"
-                style={{
-                  left: note.x * PRESENT_SCALE,
-                  top: note.y * PRESENT_SCALE,
-                  transform: `rotate(${note.rotation}deg) scale(${PRESENT_SCALE})`,
-                  backgroundColor: note.color.bg,
-                  color: note.color.ink,
-                }}
-                role="article"
-                aria-label={note.text ? `Idea: ${note.text}` : "Empty idea note"}
-              >
-                <div className="pride-note-text">{note.text}</div>
-                {note.hearts > 0 ? (
-                  <div className="pride-present-hearts">
-                    <WaIcon name="heart" aria-hidden="true" />
-                    {note.hearts}
-                  </div>
-                ) : null}
-              </div>
-            ))}
-            {notes.length === 0 ? (
-              <div className="pride-empty">
-                <p className="wa-body-l">The board is empty.</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="pride-present-controls wa-cluster wa-gap-xs wa-align-items-center" data-export-hide>
-            <button
-              type="button"
-              className="pride-present-exit"
-              onClick={() => void runExport("png")}
-              aria-label="Save this board as an image"
-            >
-              <WaIcon name="image" aria-hidden="true" />
-              Image
-            </button>
-            <button
-              type="button"
-              className="pride-present-exit"
-              onClick={() => void runExport("pdf")}
-              aria-label="Save this board as a printable PDF"
-            >
-              <WaIcon name="file-pdf" aria-hidden="true" />
-              PDF
-            </button>
-            <button
-              type="button"
-              className="pride-present-exit"
-              onClick={exitPresent}
-              aria-label="Exit presentation mode"
-            >
-              <WaIcon name="compress" aria-hidden="true" />
-              Exit
-            </button>
-          </div>
-          <div className="pride-present-qr wa-stack wa-gap-xs wa-align-items-center">
-            <WaQrCode
-              value={boardUrl || "https://pridejot.lovable.app"}
-              size={140}
-              label="QR code linking to this whiteboard"
-            />
-            <span className="wa-body-s">Scan to join</span>
-          </div>
-        </div>
-      ) : null}
-
-      <WaDialog ref={inviteDialogRef} label="Invite the room" light-dismiss>
-        <div className="wa-stack wa-gap-m wa-align-items-center">
-          <WaQrCode
-            value={boardUrl || "https://pridejot.lovable.app"}
-            size={220}
-            label="QR code linking to this whiteboard"
-          />
-          <p className="wa-body-m" style={{ margin: 0 }}>
-            Scan to open this board: {boardUrl}
-          </p>
-        </div>
-      </WaDialog>
     </WaPage>
   );
 }
