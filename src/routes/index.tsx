@@ -13,6 +13,7 @@ import {
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
+import { PrivacyBadge } from "@/components/PrivacyBadge";
 import { createBoard, getBoardByCode, normalizeCode } from "@/lib/board-service";
 
 export const Route = createFileRoute("/")({
@@ -160,7 +161,8 @@ function StartScreen() {
         ) : null}
       </div>
 
-      <div slot="footer">
+      <div slot="footer" className="wa-stack wa-gap-s wa-align-items-center">
+        <PrivacyBadge />
         <SiteFooter />
       </div>
     </WaPage>
