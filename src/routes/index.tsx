@@ -452,7 +452,7 @@ function Whiteboard() {
         </div>
       ) : null}
 
-      <WaDialog ref={inviteDialogRef} open={inviteOpen} label="Invite the room" light-dismiss>
+      <WaDialog ref={inviteDialogRef} label="Invite the room" light-dismiss>
         <div className="wa-stack wa-gap-m wa-align-items-center">
           <WaQrCode
             value={boardUrl || "https://pridejot.lovable.app"}
