@@ -109,8 +109,8 @@ function frameCapture(board: HTMLCanvasElement): HTMLCanvasElement {
   return framed;
 }
 
-/** Empty margin kept around the notes when cropping, in CSS pixels. */
-const CROP_PADDING = 48;
+/** Empty margin kept around the notes when cropping, from the spacing scale. */
+const CROP_PADDING_TOKEN = "--wa-space-3xl";
 
 /**
  * Crops the capture to the area the notes actually occupy, so an export is not
