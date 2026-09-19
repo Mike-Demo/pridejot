@@ -17,6 +17,8 @@
     "@tanstack/react-start": "^1.168.26",
     "@tanstack/router-plugin": "^1.168.18",
     "date-fns": "^4.1.0",
+    "html2canvas-pro": "^2.4.3",
+    "jspdf": "^4.2.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^2.15.4",
