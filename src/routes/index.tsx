@@ -142,7 +142,7 @@ function StartScreen() {
                 autoCapitalize="characters"
                 autoComplete="off"
                 value={code}
-                onInput={(event) => setCode((event.target as HTMLInputElement).value)}
+                onInput={(event: FormEvent) => setCode((event.target as HTMLInputElement).value)}
               />
               <WaButton type="submit" appearance="outlined" variant="neutral" size="l" loading={joining}>
                 <WaIcon slot="start" name="arrow-right" aria-hidden="true" />
