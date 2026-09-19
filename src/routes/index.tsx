@@ -9,7 +9,7 @@ import {
   WaPage,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
-import logoAsset from "@/assets/logo.png.asset.json";
+import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
