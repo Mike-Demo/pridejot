@@ -209,6 +209,25 @@ function Whiteboard() {
     setEditingId(null);
   };
 
+  const runExport = async (format: "png" | "pdf") => {
+    const board = presentBoardRef.current ?? boardRef.current;
+    if (!board) return;
+    setExportError(null);
+    setExporting(true);
+    setEditingId(null);
+    try {
+      if (format === "png") {
+        await exportBoardAsPng(board);
+      } else {
+        await exportBoardAsPdf(board);
+      }
+    } catch {
+      setExportError("Sorry, that export didn't work. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const exitPresent = () => {
     setPresenting(false);
     if (document.fullscreenElement) {
