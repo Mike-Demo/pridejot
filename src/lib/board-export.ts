@@ -93,14 +93,14 @@ function frameCapture(board: HTMLCanvasElement): HTMLCanvasElement {
   const titleSize = Math.round((headerHeight - bandHeight) * 0.42);
   const baseline = bandHeight + (headerHeight - bandHeight) / 2 + titleSize / 3;
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = token("--wa-color-neutral-90", "black");
+  ctx.fillStyle = token("--wa-color-text-normal", "black");
   ctx.font = `${token("--wa-font-weight-semibold", "600")} ${titleSize}px ${fontFamily}`;
   ctx.fillText("Queerboard", titleSize, baseline);
 
   const captionSize = Math.round(titleSize * 0.55);
   const caption = formattedDate();
   ctx.font = `${token("--wa-font-weight-normal", "400")} ${captionSize}px ${fontFamily}`;
-  ctx.fillStyle = token("--wa-color-neutral-60", "gray");
+  ctx.fillStyle = token("--wa-color-text-quiet", "gray");
   ctx.textAlign = "right";
   ctx.fillText(caption, framed.width - titleSize, baseline);
   ctx.textAlign = "left";
