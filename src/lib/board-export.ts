@@ -78,11 +78,14 @@ function frameCapture(board: HTMLCanvasElement): HTMLCanvasElement {
   const ctx = framed.getContext("2d");
   if (!ctx) return board;
 
-  ctx.fillStyle = "#ffffff";
+  const fontFamily = token("--wa-font-family-body", "system-ui, sans-serif");
+
+  ctx.fillStyle = token("--wa-color-surface-default", "white");
   ctx.fillRect(0, 0, framed.width, framed.height);
 
-  const stripeWidth = framed.width / PRIDE_STRIPES.length;
-  PRIDE_STRIPES.forEach((color, index) => {
+  const stripes = STRIPE_TOKENS.map((name) => token(name, "currentColor"));
+  const stripeWidth = framed.width / stripes.length;
+  stripes.forEach((color, index) => {
     ctx.fillStyle = color;
     ctx.fillRect(index * stripeWidth, 0, Math.ceil(stripeWidth), bandHeight);
   });
@@ -90,14 +93,14 @@ function frameCapture(board: HTMLCanvasElement): HTMLCanvasElement {
   const titleSize = Math.round((headerHeight - bandHeight) * 0.42);
   const baseline = bandHeight + (headerHeight - bandHeight) / 2 + titleSize / 3;
   ctx.textBaseline = "alphabetic";
-  ctx.fillStyle = "#2b2b2f";
-  ctx.font = `600 ${titleSize}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+  ctx.fillStyle = token("--wa-color-neutral-90", "black");
+  ctx.font = `${token("--wa-font-weight-semibold", "600")} ${titleSize}px ${fontFamily}`;
   ctx.fillText("Queerboard", titleSize, baseline);
 
   const captionSize = Math.round(titleSize * 0.55);
   const caption = formattedDate();
-  ctx.font = `400 ${captionSize}px system-ui, -apple-system, "Segoe UI", sans-serif`;
-  ctx.fillStyle = "#6b6b74";
+  ctx.font = `${token("--wa-font-weight-normal", "400")} ${captionSize}px ${fontFamily}`;
+  ctx.fillStyle = token("--wa-color-neutral-60", "gray");
   ctx.textAlign = "right";
   ctx.fillText(caption, framed.width - titleSize, baseline);
   ctx.textAlign = "left";
