@@ -13,8 +13,36 @@ const PDF_MARGIN_MM = 10;
 /** Capture scale — 2x keeps note text crisp in print and on retina screens. */
 const CAPTURE_SCALE = 2;
 
-/** Pride flag stripe colors used for the exported header band. */
-const PRIDE_STRIPES = ["#e40303", "#ff8c00", "#ffed00", "#008026", "#24408e", "#732982"];
+/**
+ * Design-system tokens the canvas needs as concrete values. The 2D canvas API
+ * cannot read CSS variables, so they are resolved from the document at export
+ * time rather than hardcoded.
+ */
+const STRIPE_TOKENS = [
+  "--wa-color-red-50",
+  "--wa-color-orange-50",
+  "--wa-color-yellow-50",
+  "--wa-color-green-50",
+  "--wa-color-blue-50",
+  "--wa-color-purple-50",
+];
+
+function token(name: string, fallback: string): string {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
+
+function tokenPx(name: string, fallback: number): number {
+  const probe = document.createElement("div");
+  probe.style.position = "absolute";
+  probe.style.visibility = "hidden";
+  probe.style.width = `var(${name})`;
+  document.body.appendChild(probe);
+  const width = probe.getBoundingClientRect().width;
+  probe.remove();
+  return width > 0 ? width : fallback;
+}
+
 
 function timestampedName(extension: string): string {
   const today = new Date().toISOString().slice(0, 10);
