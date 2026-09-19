@@ -210,7 +210,9 @@ function Whiteboard() {
   };
 
   const runExport = async (format: "png" | "pdf") => {
-    const board = presentBoardRef.current ?? boardRef.current;
+    /* Always capture the editor board: the presentation board is scaled and
+       clipped to the screen, which would cut notes off in the export. */
+    const board = boardRef.current;
     if (!board) return;
     setExportError(null);
     setExporting(true);
