@@ -216,6 +216,18 @@ function Whiteboard() {
   };
 
   useEffect(() => {
+    setBoardUrl(window.location.origin + window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    const dialog = inviteDialogRef.current;
+    if (!dialog) return;
+    const onHide = () => setInviteOpen(false);
+    dialog.addEventListener("wa-hide", onHide);
+    return () => dialog.removeEventListener("wa-hide", onHide);
+  }, []);
+
+  useEffect(() => {
     if (!presenting) return;
     const onFullscreenChange = () => {
       if (!document.fullscreenElement) setPresenting(false);
@@ -264,6 +276,10 @@ function Whiteboard() {
             <WaButton variant="brand" size="l" onClick={addNoteFromButton}>
               <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
               Add idea
+            </WaButton>
+            <WaButton appearance="outlined" variant="neutral" size="l" onClick={() => setInviteOpen(true)}>
+              <WaIcon slot="start" name="qrcode" aria-hidden="true" />
+              Invite
             </WaButton>
             <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
               <WaIcon slot="start" name="display" aria-hidden="true" />
