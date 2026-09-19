@@ -117,7 +117,6 @@ function Whiteboard() {
   const [exporting, setExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
-  const presentBoardRef = useRef<HTMLDivElement>(null);
   const inviteDialogRef = useRef<HTMLElement>(null);
   const dragRef = useRef<{
     id: number;
