@@ -9,6 +9,7 @@ import {
   WaPage,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
+import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -236,10 +237,18 @@ function Whiteboard() {
         <div className="wa-split wa-gap-m wa-align-items-center">
           <div className="wa-cluster wa-gap-m wa-align-items-center">
             <h1
-              className="wa-heading-l"
-              style={{ margin: 0, display: "flex", alignItems: "center", gap: "var(--wa-space-s)" }}
+              className="wa-heading-l wa-cluster wa-gap-s wa-align-items-center"
+              style={{ margin: 0 }}
             >
-              <WaIcon name="rainbow" aria-hidden="true" />
+              <img
+                src={logoUrl}
+                alt=""
+                style={{
+                  width: "var(--wa-space-xl)",
+                  height: "var(--wa-space-xl)",
+                  borderRadius: "var(--wa-border-radius-m)",
+                }}
+              />
               Queerboard
             </h1>
             <span className="wa-body-s" style={{ color: "var(--wa-color-neutral-on-quiet)" }}>
