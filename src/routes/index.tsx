@@ -5,13 +5,17 @@ import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent }
 import {
   SiteFooter,
   WaButton,
+  WaCallout,
   WaDialog,
+  WaDropdown,
+  WaDropdownItem,
   WaIcon,
   WaPage,
   WaQrCode,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
+import { exportBoardAsPdf, exportBoardAsPng } from "@/lib/board-export";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -110,6 +114,8 @@ function Whiteboard() {
   const [presenting, setPresenting] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [boardUrl, setBoardUrl] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const inviteDialogRef = useRef<HTMLElement>(null);
   const dragRef = useRef<{
@@ -202,6 +208,27 @@ function Whiteboard() {
     setEditingId(null);
   };
 
+  const runExport = async (format: "png" | "pdf") => {
+    /* Always capture the editor board: the presentation board is scaled and
+       clipped to the screen, which would cut notes off in the export. */
+    const board = boardRef.current;
+    if (!board) return;
+    setExportError(null);
+    setExporting(true);
+    setEditingId(null);
+    try {
+      if (format === "png") {
+        await exportBoardAsPng(board);
+      } else {
+        await exportBoardAsPdf(board);
+      }
+    } catch {
+      setExportError("Sorry, that export didn't work. Please try again.");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const exitPresent = () => {
     setPresenting(false);
     if (document.fullscreenElement) {
@@ -288,6 +315,20 @@ function Whiteboard() {
               <WaIcon slot="start" name="qrcode" aria-hidden="true" />
               Invite
             </WaButton>
+            <WaDropdown>
+              <WaButton slot="trigger" appearance="outlined" variant="neutral" size="l" with-caret loading={exporting}>
+                <WaIcon slot="start" name="download" aria-hidden="true" />
+                Export
+              </WaButton>
+              <WaDropdownItem onClick={() => void runExport("png")}>
+                <WaIcon slot="icon" name="image" aria-hidden="true" />
+                Save as image (PNG)
+              </WaDropdownItem>
+              <WaDropdownItem onClick={() => void runExport("pdf")}>
+                <WaIcon slot="icon" name="file-pdf" aria-hidden="true" />
+                Save as PDF
+              </WaDropdownItem>
+            </WaDropdown>
             <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
               <WaIcon slot="start" name="display" aria-hidden="true" />
               Present
@@ -317,6 +358,12 @@ function Whiteboard() {
             ))}
           </div>
         </div>
+        {exportError ? (
+          <WaCallout variant="danger">
+            <WaIcon slot="icon" name="triangle-exclamation" aria-hidden="true" />
+            {exportError}
+          </WaCallout>
+        ) : null}
       </div>
 
       <div
@@ -387,6 +434,7 @@ function Whiteboard() {
               <button
                 type="button"
                 className="pride-note-icon-btn"
+                data-export-hide
                 onClick={() => removeNote(note.id)}
                 aria-label="Remove this idea"
               >
@@ -439,15 +487,35 @@ function Whiteboard() {
               </div>
             ) : null}
           </div>
-          <button
-            type="button"
-            className="pride-present-exit"
-            onClick={exitPresent}
-            aria-label="Exit presentation mode"
-          >
-            <WaIcon name="compress" aria-hidden="true" />
-            Exit
-          </button>
+          <div className="pride-present-controls wa-cluster wa-gap-xs wa-align-items-center" data-export-hide>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={() => void runExport("png")}
+              aria-label="Save this board as an image"
+            >
+              <WaIcon name="image" aria-hidden="true" />
+              Image
+            </button>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={() => void runExport("pdf")}
+              aria-label="Save this board as a printable PDF"
+            >
+              <WaIcon name="file-pdf" aria-hidden="true" />
+              PDF
+            </button>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={exitPresent}
+              aria-label="Exit presentation mode"
+            >
+              <WaIcon name="compress" aria-hidden="true" />
+              Exit
+            </button>
+          </div>
           <div className="pride-present-qr wa-stack wa-gap-xs wa-align-items-center">
             <WaQrCode
               value={boardUrl || "https://pridejot.lovable.app"}
