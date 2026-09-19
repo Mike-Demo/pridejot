@@ -357,6 +357,12 @@ function Whiteboard() {
             ))}
           </div>
         </div>
+        {exportError ? (
+          <WaCallout variant="danger">
+            <WaIcon slot="icon" name="triangle-exclamation" aria-hidden="true" />
+            {exportError}
+          </WaCallout>
+        ) : null}
       </div>
 
       <div
