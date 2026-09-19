@@ -31,7 +31,12 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       mockupPreviewPlugin(),
       tsConfigPaths({ projects: ["./tsconfig.json"] }),
-      ...(useCloudflare ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
+      // configPath points at the renamed wrangler config: a root-level
+      // "wrangler.jsonc" makes static hosts (Spacefast) flag a worker
+      // entrypoint, even though the static build never uses Cloudflare.
+      ...(useCloudflare
+        ? [cloudflare({ viteEnvironment: { name: "ssr" }, configPath: "wrangler.dev.jsonc" })]
+        : []),
       tanstackStart({
         // Public, non-parameterized routes that ship as static HTML.
         // Board pages (/b/$code) stay client-rendered via the SPA fallback.
