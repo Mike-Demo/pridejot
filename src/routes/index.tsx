@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 
 import {
@@ -67,6 +67,9 @@ let nextId = 100;
 const NOTE_WIDTH = 240;
 const NOTE_HALF = NOTE_WIDTH / 2;
 
+/** Presentation mode enlarges notes so a conference-room screen stays readable. */
+const PRESENT_SCALE = 1.6;
+
 const seedNotes: Note[] = [
   {
     id: 1,
@@ -101,6 +104,7 @@ function Whiteboard() {
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [selectedColor, setSelectedColor] = useState<NoteColor>(NOTE_COLORS[6]!);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [presenting, setPresenting] = useState(false);
   const boardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     id: number;
@@ -191,6 +195,35 @@ function Whiteboard() {
     setNotes([]);
     setEditingId(null);
   };
+
+  const exitPresent = () => {
+    setPresenting(false);
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
+  };
+
+  const enterPresent = () => {
+    setEditingId(null);
+    setPresenting(true);
+    void document.documentElement.requestFullscreen?.().catch(() => undefined);
+  };
+
+  useEffect(() => {
+    if (!presenting) return;
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setPresenting(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") exitPresent();
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [presenting]);
 
   const draggingId = dragRef.current?.id ?? null;
 
