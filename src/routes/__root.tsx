@@ -8,6 +8,10 @@ import {
 import type { ReactNode } from "react";
 
 import { WEB_AWESOME_HTML_CLASSES } from "@/design-system/font-awsome-web-awesome-171158/webawesome/setup";
+import {
+  FONT_AWESOME_STYLE_URL,
+  WEB_AWESOME_STYLE_URL,
+} from "@/design-system/font-awsome-web-awesome-171158/webawesome/cdn";
 import themeCss from "@/design-system/font-awsome-web-awesome-171158/webawesome/theme.css?url";
 import appCss from "../styles.css?url";
 
@@ -33,6 +37,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "stylesheet", href: WEB_AWESOME_STYLE_URL },
+      { rel: "stylesheet", href: FONT_AWESOME_STYLE_URL },
       { rel: "stylesheet", href: themeCss },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
