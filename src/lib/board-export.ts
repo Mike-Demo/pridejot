@@ -133,10 +133,11 @@ function cropToNotes(canvas: HTMLCanvasElement, board: HTMLElement): HTMLCanvasE
     bottom = Math.max(bottom, rect.bottom - boardRect.top);
   }
 
-  const x = Math.max(0, Math.floor((left - CROP_PADDING) * CAPTURE_SCALE));
-  const y = Math.max(0, Math.floor((top - CROP_PADDING) * CAPTURE_SCALE));
-  const width = Math.min(canvas.width - x, Math.ceil((right - left + CROP_PADDING * 2) * CAPTURE_SCALE));
-  const height = Math.min(canvas.height - y, Math.ceil((bottom - top + CROP_PADDING * 2) * CAPTURE_SCALE));
+  const padding = tokenPx(CROP_PADDING_TOKEN, 48);
+  const x = Math.max(0, Math.floor((left - padding) * CAPTURE_SCALE));
+  const y = Math.max(0, Math.floor((top - padding) * CAPTURE_SCALE));
+  const width = Math.min(canvas.width - x, Math.ceil((right - left + padding * 2) * CAPTURE_SCALE));
+  const height = Math.min(canvas.height - y, Math.ceil((bottom - top + padding * 2) * CAPTURE_SCALE));
   if (width <= 0 || height <= 0) return canvas;
 
   const cropped = document.createElement("canvas");
