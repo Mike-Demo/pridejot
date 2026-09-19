@@ -241,7 +241,7 @@ function Whiteboard() {
               style={{ margin: 0, display: "flex", alignItems: "center", gap: "var(--wa-space-s)" }}
             >
               <img
-                src={logoAsset.url}
+                src={logoUrl}
                 alt=""
                 width="40"
                 height="40"
