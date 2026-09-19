@@ -9,6 +9,7 @@ import {
   WaPage,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -239,7 +240,13 @@ function Whiteboard() {
               className="wa-heading-l"
               style={{ margin: 0, display: "flex", alignItems: "center", gap: "var(--wa-space-s)" }}
             >
-              <WaIcon name="rainbow" aria-hidden="true" />
+              <img
+                src={logoAsset.url}
+                alt=""
+                width="40"
+                height="40"
+                style={{ borderRadius: "var(--wa-border-radius-m)" }}
+              />
               Queerboard
             </h1>
             <span className="wa-body-s" style={{ color: "var(--wa-color-neutral-on-quiet)" }}>
