@@ -227,6 +227,13 @@ function Whiteboard() {
     return () => dialog.removeEventListener("wa-hide", onHide);
   }, []);
 
+  /* The wa-dialog `open` boolean must be set as a property — React sets the
+     wrapper's emitted empty-string attribute back to falsy on the element. */
+  useEffect(() => {
+    const dialog = inviteDialogRef.current as (HTMLElement & { open: boolean }) | null;
+    if (dialog) dialog.open = inviteOpen;
+  }, [inviteOpen]);
+
   useEffect(() => {
     if (!presenting) return;
     const onFullscreenChange = () => {
