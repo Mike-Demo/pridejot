@@ -180,10 +180,13 @@ body {
   opacity: 0.75;
 }
 
-.pride-present-exit {
+.pride-present-controls {
   position: absolute;
   right: var(--wa-space-l);
   bottom: var(--wa-space-l);
+}
+
+.pride-present-exit {
   display: inline-flex;
   align-items: center;
   gap: var(--wa-space-xs);
