@@ -314,6 +314,20 @@ function Whiteboard() {
               <WaIcon slot="start" name="qrcode" aria-hidden="true" />
               Invite
             </WaButton>
+            <WaDropdown>
+              <WaButton slot="trigger" appearance="outlined" variant="neutral" size="l" with-caret loading={exporting}>
+                <WaIcon slot="start" name="download" aria-hidden="true" />
+                Export
+              </WaButton>
+              <WaDropdownItem onClick={() => void runExport("png")}>
+                <WaIcon slot="icon" name="image" aria-hidden="true" />
+                Save as image (PNG)
+              </WaDropdownItem>
+              <WaDropdownItem onClick={() => void runExport("pdf")}>
+                <WaIcon slot="icon" name="file-pdf" aria-hidden="true" />
+                Save as PDF
+              </WaDropdownItem>
+            </WaDropdown>
             <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
               <WaIcon slot="start" name="display" aria-hidden="true" />
               Present
