@@ -17,10 +17,12 @@ The build command is also `bun run build` / `npm run build`.
 | What | Path |
 | ---- | ---- |
 | Static output directory (serve this) | `dist/client` |
-| Raw Nitro/prerender output | `.output/public` |
+| Raw prerender output, on toolchains that emit it | `.output/public` |
 
-`scripts/copy-static-output.mjs` copies `.output/public` into `dist/client`. It is
-idempotent and skips gracefully if the output already lives in `dist/client`.
+`scripts/copy-static-output.mjs` copies `.output/public` into `dist/client` when
+that folder exists. With the current TanStack version the prerender pass already
+writes straight into `dist/client`, so the script reports "nothing to copy" and
+exits 0. It is idempotent and safe to keep in the build command.
 
 ## Prerendered routes
 
