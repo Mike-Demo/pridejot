@@ -433,6 +433,7 @@ function Whiteboard() {
               <button
                 type="button"
                 className="pride-note-icon-btn"
+                data-export-hide
                 onClick={() => removeNote(note.id)}
                 aria-label="Remove this idea"
               >
