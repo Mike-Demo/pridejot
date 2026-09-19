@@ -486,15 +486,35 @@ function Whiteboard() {
               </div>
             ) : null}
           </div>
-          <button
-            type="button"
-            className="pride-present-exit"
-            onClick={exitPresent}
-            aria-label="Exit presentation mode"
-          >
-            <WaIcon name="compress" aria-hidden="true" />
-            Exit
-          </button>
+          <div className="pride-present-controls wa-cluster wa-gap-xs wa-align-items-center" data-export-hide>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={() => void runExport("png")}
+              aria-label="Save this board as an image"
+            >
+              <WaIcon name="image" aria-hidden="true" />
+              Image
+            </button>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={() => void runExport("pdf")}
+              aria-label="Save this board as a printable PDF"
+            >
+              <WaIcon name="file-pdf" aria-hidden="true" />
+              PDF
+            </button>
+            <button
+              type="button"
+              className="pride-present-exit"
+              onClick={exitPresent}
+              aria-label="Exit presentation mode"
+            >
+              <WaIcon name="compress" aria-hidden="true" />
+              Exit
+            </button>
+          </div>
           <div className="pride-present-qr wa-stack wa-gap-xs wa-align-items-center">
             <WaQrCode
               value={boardUrl || "https://pridejot.lovable.app"}
