@@ -1,9 +1,136 @@
-* {
+html,
+body {
+  min-height: 100%;
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
+/* Pride whiteboard — custom surface styles built on --wa-* tokens.
+   Note colors below are the explicit pride palette requested for the board. */
+
+.pride-board {
+  position: relative;
+  flex: 1;
+  min-height: 100%;
+  overflow: hidden;
+  background-color: var(--wa-color-surface-default);
+  background-image: radial-gradient(
+    circle,
+    var(--wa-color-neutral-border-quiet, var(--wa-color-gray-80)) 1px,
+    transparent 1px
+  );
+  background-size: var(--wa-space-xl) var(--wa-space-xl);
+  cursor: copy;
+  touch-action: none;
+}
+
+.pride-rainbow-bar {
+  height: var(--wa-space-2xs);
+  background: linear-gradient(
+    90deg,
+    #e40303 0%,
+    #ff8c00 17%,
+    #ffed00 33%,
+    #008026 50%,
+    #24408e 67%,
+    #732982 83%,
+    #e40303 100%
+  );
+}
+
+.pride-note {
+  position: absolute;
+  width: 15rem;
+  min-height: 9rem;
+  border-radius: var(--wa-border-radius-s);
+  box-shadow: var(--wa-shadow-m);
+  padding: var(--wa-space-s);
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-xs);
+  color: var(--wa-color-neutral-on-quiet, #2b2b2f);
+  font-family: var(--wa-font-family-body);
+  font-size: var(--wa-font-size-m);
+  line-height: var(--wa-line-height-normal);
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow var(--wa-transition-fast) var(--wa-transition-easing);
+}
+
+.pride-note:active {
+  cursor: grabbing;
+}
+
+.pride-note[data-dragging="true"] {
+  box-shadow: var(--wa-shadow-l);
+  z-index: 50;
+}
+
+.pride-note-text {
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  outline: none;
+}
+
+.pride-note-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 5.5rem;
+  resize: none;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  outline: none;
+}
+
+.pride-note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--wa-font-size-s);
+}
+
+.pride-note-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--wa-space-2xs);
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: var(--wa-space-2xs);
+  border-radius: var(--wa-border-radius-s);
+  opacity: 0.75;
+}
+
+.pride-note-icon-btn:hover {
+  opacity: 1;
+  background-color: var(--wa-color-mix-hover);
+}
+
+.pride-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+  color: var(--wa-color-neutral-on-quiet);
+}
+
+.pride-swatch {
+  width: var(--wa-space-l);
+  height: var(--wa-space-l);
+  border-radius: var(--wa-border-radius-circle);
+  border: var(--wa-border-width-s) var(--wa-border-style) transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.pride-swatch[aria-pressed="true"] {
+  outline: var(--wa-focus-ring-width) var(--wa-focus-ring-style) var(--wa-color-brand-fill-normal);
+  outline-offset: var(--wa-focus-ring-offset);
 }
