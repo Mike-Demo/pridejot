@@ -5,13 +5,17 @@ import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent }
 import {
   SiteFooter,
   WaButton,
+  WaCallout,
   WaDialog,
+  WaDropdown,
+  WaDropdownItem,
   WaIcon,
   WaPage,
   WaQrCode,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
+import { exportBoardAsPdf, exportBoardAsPng } from "@/lib/board-export";
 
 export const Route = createFileRoute("/")({
   head: () => ({
