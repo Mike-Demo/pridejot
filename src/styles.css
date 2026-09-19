@@ -204,3 +204,15 @@ body {
 .pride-present-exit:focus-visible {
   opacity: 1;
 }
+
+.pride-present-qr {
+  position: absolute;
+  left: var(--wa-space-l);
+  bottom: var(--wa-space-l);
+  background-color: var(--wa-color-surface-raised);
+  color: var(--wa-color-neutral-on-quiet);
+  border: var(--wa-border-width-s) var(--wa-border-style) var(--wa-color-neutral-border-loud);
+  border-radius: var(--wa-border-radius-l);
+  padding: var(--wa-space-m);
+  box-shadow: var(--wa-shadow-m);
+}

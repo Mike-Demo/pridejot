@@ -5,8 +5,10 @@ import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent }
 import {
   SiteFooter,
   WaButton,
+  WaDialog,
   WaIcon,
   WaPage,
+  WaQrCode,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import logoUrl from "@/assets/logo.png";
@@ -106,7 +108,10 @@ function Whiteboard() {
   const [selectedColor, setSelectedColor] = useState<NoteColor>(NOTE_COLORS[6]!);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [presenting, setPresenting] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [boardUrl, setBoardUrl] = useState("");
   const boardRef = useRef<HTMLDivElement>(null);
+  const inviteDialogRef = useRef<HTMLElement>(null);
   const dragRef = useRef<{
     id: number;
     offsetX: number;
@@ -211,6 +216,25 @@ function Whiteboard() {
   };
 
   useEffect(() => {
+    setBoardUrl(window.location.origin + window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    const dialog = inviteDialogRef.current;
+    if (!dialog) return;
+    const onHide = () => setInviteOpen(false);
+    dialog.addEventListener("wa-hide", onHide);
+    return () => dialog.removeEventListener("wa-hide", onHide);
+  }, []);
+
+  /* The wa-dialog `open` boolean must be set as a property — React sets the
+     wrapper's emitted empty-string attribute back to falsy on the element. */
+  useEffect(() => {
+    const dialog = inviteDialogRef.current as (HTMLElement & { open: boolean }) | null;
+    if (dialog) dialog.open = inviteOpen;
+  }, [inviteOpen]);
+
+  useEffect(() => {
     if (!presenting) return;
     const onFullscreenChange = () => {
       if (!document.fullscreenElement) setPresenting(false);
@@ -259,6 +283,10 @@ function Whiteboard() {
             <WaButton variant="brand" size="l" onClick={addNoteFromButton}>
               <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
               Add idea
+            </WaButton>
+            <WaButton appearance="outlined" variant="neutral" size="l" onClick={() => setInviteOpen(true)}>
+              <WaIcon slot="start" name="qrcode" aria-hidden="true" />
+              Invite
             </WaButton>
             <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
               <WaIcon slot="start" name="display" aria-hidden="true" />
@@ -420,8 +448,29 @@ function Whiteboard() {
             <WaIcon name="compress" aria-hidden="true" />
             Exit
           </button>
+          <div className="pride-present-qr wa-stack wa-gap-xs wa-align-items-center">
+            <WaQrCode
+              value={boardUrl || "https://pridejot.lovable.app"}
+              size={140}
+              label="QR code linking to this whiteboard"
+            />
+            <span className="wa-body-s">Scan to join</span>
+          </div>
         </div>
       ) : null}
+
+      <WaDialog ref={inviteDialogRef} label="Invite the room" light-dismiss>
+        <div className="wa-stack wa-gap-m wa-align-items-center">
+          <WaQrCode
+            value={boardUrl || "https://pridejot.lovable.app"}
+            size={220}
+            label="QR code linking to this whiteboard"
+          />
+          <p className="wa-body-m" style={{ margin: 0 }}>
+            Scan to open this board: {boardUrl}
+          </p>
+        </div>
+      </WaDialog>
     </WaPage>
   );
 }
