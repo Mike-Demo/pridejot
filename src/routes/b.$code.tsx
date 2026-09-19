@@ -101,7 +101,8 @@ function BoardRoute() {
           )}
         </div>
       )}
-      <div slot="footer">
+      <div slot="footer" className="wa-stack wa-gap-s wa-align-items-center">
+        <PrivacyBadge />
         <SiteFooter />
       </div>
     </WaPage>
