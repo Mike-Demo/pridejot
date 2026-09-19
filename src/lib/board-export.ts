@@ -151,7 +151,8 @@ function cropToNotes(canvas: HTMLCanvasElement, board: HTMLElement): HTMLCanvasE
 
 async function captureBoard(board: HTMLElement): Promise<HTMLCanvasElement> {
   const { default: html2canvas } = await import("html2canvas-pro");
-  const backgroundColor = getComputedStyle(board).backgroundColor || "#ffffff";
+  const backgroundColor =
+    getComputedStyle(board).backgroundColor || token("--wa-color-surface-default", "white");
   const canvas = await html2canvas(board, {
     scale: CAPTURE_SCALE,
     backgroundColor,
