@@ -8,9 +8,15 @@ import { componentTagger } from "lovable-tagger";
 import { mockupPreviewPlugin } from "./mockupPreviewPlugin";
 
 export default defineConfig(({ command, mode }) => {
-  // Cloudflare Workers plugin only on build (produces the worker output);
-  // the workerd runtime isn't available for the dev server.
-  const useCloudflare = command === "build";
+  // Production build = static site for Spacefast: prerender the public routes
+  // and skip the Cloudflare Workers output (its bundle layout breaks the
+  // prerender preview server, and a static host has no worker to run).
+  const isStaticBuild = command === "build" && mode !== "development";
+
+  // Cloudflare Workers plugin only on the Lovable development build (produces
+  // the worker output); the workerd runtime isn't available for the dev server.
+  const useCloudflare = command === "build" && !isStaticBuild;
+
 
   return {
     server: {
@@ -26,7 +32,12 @@ export default defineConfig(({ command, mode }) => {
       mockupPreviewPlugin(),
       tsConfigPaths({ projects: ["./tsconfig.json"] }),
       ...(useCloudflare ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
-      tanstackStart(),
+      tanstackStart({
+        // Public, non-parameterized routes that ship as static HTML.
+        // Board pages (/b/$code) stay client-rendered via the SPA fallback.
+        pages: [{ path: "/" }, { path: "/licenses" }],
+        prerender: { enabled: isStaticBuild, autoStaticPathsDiscovery: false },
+      }),
       viteReact(),
       ...(mode === "development" ? [componentTagger()] : []),
     ],
