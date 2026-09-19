@@ -457,7 +457,7 @@ function Whiteboard() {
           aria-label="Presentation mode"
         >
           <div className="pride-rainbow-bar pride-present-bar" aria-hidden="true" />
-          <div className="pride-present-board" ref={presentBoardRef}>
+          <div className="pride-present-board">
             {notes.map((note) => (
               <div
                 key={note.id}
