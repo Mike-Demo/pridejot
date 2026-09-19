@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 
 import {
@@ -67,6 +67,9 @@ let nextId = 100;
 const NOTE_WIDTH = 240;
 const NOTE_HALF = NOTE_WIDTH / 2;
 
+/** Presentation mode enlarges notes so a conference-room screen stays readable. */
+const PRESENT_SCALE = 1.6;
+
 const seedNotes: Note[] = [
   {
     id: 1,
@@ -101,6 +104,7 @@ function Whiteboard() {
   const [notes, setNotes] = useState<Note[]>(seedNotes);
   const [selectedColor, setSelectedColor] = useState<NoteColor>(NOTE_COLORS[6]!);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [presenting, setPresenting] = useState(false);
   const boardRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
     id: number;
@@ -192,6 +196,35 @@ function Whiteboard() {
     setEditingId(null);
   };
 
+  const exitPresent = () => {
+    setPresenting(false);
+    if (document.fullscreenElement) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
+  };
+
+  const enterPresent = () => {
+    setEditingId(null);
+    setPresenting(true);
+    void document.documentElement.requestFullscreen?.().catch(() => undefined);
+  };
+
+  useEffect(() => {
+    if (!presenting) return;
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement) setPresenting(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") exitPresent();
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [presenting]);
+
   const draggingId = dragRef.current?.id ?? null;
 
   return (
@@ -217,6 +250,10 @@ function Whiteboard() {
             <WaButton variant="brand" size="l" onClick={addNoteFromButton}>
               <WaIcon slot="start" name="note-sticky" aria-hidden="true" />
               Add idea
+            </WaButton>
+            <WaButton appearance="outlined" variant="neutral" size="l" onClick={enterPresent}>
+              <WaIcon slot="start" name="display" aria-hidden="true" />
+              Present
             </WaButton>
             <WaButton appearance="outlined" variant="danger" size="l" onClick={clearBoard}>
               <WaIcon slot="start" name="eraser" aria-hidden="true" />
@@ -326,6 +363,56 @@ function Whiteboard() {
       <div slot="footer">
         <SiteFooter />
       </div>
+
+      {presenting ? (
+        <div
+          className="pride-present"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Presentation mode"
+        >
+          <div className="pride-rainbow-bar pride-present-bar" aria-hidden="true" />
+          <div className="pride-present-board">
+            {notes.map((note) => (
+              <div
+                key={note.id}
+                className="pride-note pride-present-note"
+                style={{
+                  left: note.x * PRESENT_SCALE,
+                  top: note.y * PRESENT_SCALE,
+                  transform: `rotate(${note.rotation}deg) scale(${PRESENT_SCALE})`,
+                  backgroundColor: note.color.bg,
+                  color: note.color.ink,
+                }}
+                role="article"
+                aria-label={note.text ? `Idea: ${note.text}` : "Empty idea note"}
+              >
+                <div className="pride-note-text">{note.text}</div>
+                {note.hearts > 0 ? (
+                  <div className="pride-present-hearts">
+                    <WaIcon name="heart" aria-hidden="true" />
+                    {note.hearts}
+                  </div>
+                ) : null}
+              </div>
+            ))}
+            {notes.length === 0 ? (
+              <div className="pride-empty">
+                <p className="wa-body-l">The board is empty.</p>
+              </div>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            className="pride-present-exit"
+            onClick={exitPresent}
+            aria-label="Exit presentation mode"
+          >
+            <WaIcon name="compress" aria-hidden="true" />
+            Exit
+          </button>
+        </div>
+      ) : null}
     </WaPage>
   );
 }
