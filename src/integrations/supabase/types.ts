@@ -14,13 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      boards: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          board_id: string
+          color_index: number
+          created_at: string
+          hearts: number
+          id: string
+          rotation: number
+          text: string
+          updated_at: string
+          x: number
+          y: number
+        }
+        Insert: {
+          board_id: string
+          color_index?: number
+          created_at?: string
+          hearts?: number
+          id?: string
+          rotation?: number
+          text?: string
+          updated_at?: string
+          x?: number
+          y?: number
+        }
+        Update: {
+          board_id?: string
+          color_index?: number
+          created_at?: string
+          hearts?: number
+          id?: string
+          rotation?: number
+          text?: string
+          updated_at?: string
+          x?: number
+          y?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notes_board_id_fkey"
+            columns: ["board_id"]
+            isOneToOne: false
+            referencedRelation: "boards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      delete_expired_boards: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
