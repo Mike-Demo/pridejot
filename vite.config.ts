@@ -26,7 +26,12 @@ export default defineConfig(({ command, mode }) => {
       mockupPreviewPlugin(),
       tsConfigPaths({ projects: ["./tsconfig.json"] }),
       ...(useCloudflare ? [cloudflare({ viteEnvironment: { name: "ssr" } })] : []),
-      tanstackStart(),
+      tanstackStart({
+        // Public, non-parameterized routes that ship as static HTML.
+        // Board pages (/b/$code) stay client-rendered via the SPA fallback.
+        pages: [{ path: "/" }, { path: "/licenses" }],
+        prerender: { enabled: true, autoStaticPathsDiscovery: false },
+      }),
       viteReact(),
       ...(mode === "development" ? [componentTagger()] : []),
     ],
