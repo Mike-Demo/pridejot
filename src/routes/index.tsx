@@ -237,8 +237,8 @@ function Whiteboard() {
         <div className="wa-split wa-gap-m wa-align-items-center">
           <div className="wa-cluster wa-gap-m wa-align-items-center">
             <h1
-              className="wa-heading-l"
-              style={{ margin: 0, display: "flex", alignItems: "center", gap: "var(--wa-space-s)" }}
+              className="wa-heading-l wa-cluster wa-gap-s wa-align-items-center"
+              style={{ margin: 0 }}
             >
               <img
                 src={logoUrl}
