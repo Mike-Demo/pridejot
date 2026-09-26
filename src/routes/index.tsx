@@ -32,7 +32,28 @@ export const Route = createFileRoute("/")({
           "Start a shared idea board for the room, invite phones with a QR code, and watch ideas and hearts appear live.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mikedemo.one/" },
+      { property: "og:image", content: "https://mikedemo.one/favicon.png" },
       { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "https://mikedemo.one/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "Queerboard",
+          url: "https://mikedemo.one/",
+          description:
+            "A pride-themed idea wall for the conference room. Start a board, put it on the big screen, and everyone in the room can add ideas and hearts from their phones.",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Any",
+          browserRequirements: "Requires JavaScript",
+          inLanguage: "en",
+          author: { "@type": "Person", name: "MikeDemo" },
+        }).replace(/</g, "\u003c"),
+      },
     ],
   }),
   component: StartScreen,
