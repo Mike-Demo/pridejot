@@ -1,0 +1,26 @@
+# Queerboard
+
+> A pride-themed shared idea whiteboard: start a board for the room, let everyone join by code or QR, and add sticky notes and hearts in real time.
+
+## What Queerboard is
+
+Queerboard is a realtime group idea whiteboard built for conference rooms, classrooms, meetups, and community events. One screen — the big screen — hosts the board; everyone else joins from their phones to add ideas and react.
+
+How it works:
+
+- **Start a board** on the room screen. You get a short room code and a QR code to display.
+- **Join from a phone** by scanning the QR code or typing the room code.
+- **Add sticky notes** with ideas, drag them around, and vote with hearts. Everything appears live.
+- **Boards close on their own** 24 hours after they start. There is no login and nothing is saved long-term.
+
+## Key pages
+
+- Home and start screen: https://mikedemo.one/
+- A live board (replace CODE with the room code, e.g. `ABC234`): https://mikedemo.one/b/CODE
+- Open-source licenses: https://mikedemo.one/licenses
+
+## Notes for agents
+
+- Board URLs are dynamic: each board lives at `https://mikedemo.one/b/<CODE>` and only exists while the board is live (24 hours max).
+- There is no login, no account, and no API — starting, joining, and posting all happen in the browser UI.
+- Machine-readable files: https://mikedemo.one/robots.txt, https://mikedemo.one/sitemap.xml, https://mikedemo.one/.well-known/agent.json
