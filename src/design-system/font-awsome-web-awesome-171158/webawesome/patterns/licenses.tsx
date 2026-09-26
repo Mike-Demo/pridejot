@@ -125,6 +125,18 @@ export function LicensesPage({
       <header className="wa-stack wa-gap-xs" style={{ marginBlockStart: "var(--wa-space-l)" }}>
         <h1>{heading}</h1>
         <p className="wa-licenses-lede">{lede}</p>
+        <a
+          href="https://app.aikido.dev/audit-report/external/smlvhLoPnScdRnVeF7TjudEr/request"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Aikido Security Audit Report (opens in new tab)"
+        >
+          <img
+            src="https://app.aikido.dev/assets/badges/full-light-theme.svg"
+            alt="Aikido Security Audit Report"
+            height={40}
+          />
+        </a>
       </header>
 
       {groups.map((group) => (
