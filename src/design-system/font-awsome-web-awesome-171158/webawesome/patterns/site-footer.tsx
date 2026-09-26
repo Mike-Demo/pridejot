@@ -19,6 +19,12 @@ export interface SiteFooterSocialLink {
 /** The standard social links every project ships with. */
 export const DEFAULT_SOCIAL_LINKS: readonly SiteFooterSocialLink[] = [
   {
+    label: "MikeDemo on GitHub",
+    href: "https://github.com/Mike-Demo",
+    icon: "github",
+    text: "GitHub",
+  },
+  {
     label: "MikeDemo on LinkedIn",
     href: "https://www.linkedin.com/in/mikedemopoulos",
     icon: "linkedin",
