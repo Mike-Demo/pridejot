@@ -54,6 +54,71 @@ export const Route = createFileRoute("/")({
           author: { "@type": "Person", name: "MikeDemo" },
         }).replace(/</g, "\u003c"),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Queerboard",
+          url: "https://mikedemo.one/",
+          inLanguage: "en",
+          publisher: {
+            "@type": "Organization",
+            name: "MikeDemo",
+            url: "https://mikedemo.dev",
+          },
+        }).replace(/</g, "\u003c"),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "MikeDemo",
+          url: "https://mikedemo.dev",
+        }).replace(/</g, "\u003c"),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is Queerboard?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Queerboard is a pride-themed shared idea whiteboard for meeting rooms and events. Start a board, put it on the big screen, and everyone in the room can add sticky notes and vote with hearts from their phones in real time.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Do I need an account to join a board?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "No. Anyone with the room code or QR code can join from their phone browser. There is no sign-up and nothing to install.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Is anything I write on a board saved?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Nothing is saved. Boards close on their own 24 hours after they are created, and no account or personal data is required to take part.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Can I keep or share the results of a board?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes. A finished board can be exported as a downloadable image or PDF to share with the room.",
+              },
+            },
+          ],
+        }).replace(/</g, "\u003c"),
+      },
     ],
   }),
   component: StartScreen,
