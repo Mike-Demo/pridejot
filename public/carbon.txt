@@ -1,0 +1,12 @@
+version = "0.5"
+last_updated = 2026-09-27
+
+[org]
+disclosures = [
+    { doc_type = "web-page", url = "https://mikedemo.one/licenses", domain = "mikedemo.one", title = "Carbon disclosure for Queerboard" },
+]
+
+[upstream]
+services = [
+    { domain = "www.spacefast.com", service_type = "shared-hosting" },
+]
