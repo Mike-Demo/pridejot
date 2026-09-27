@@ -25,6 +25,7 @@ export const Route = createFileRoute("/licenses")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://mikedemo.one/licenses" }],
   }),
   component: Licenses,
 });
