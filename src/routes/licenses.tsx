@@ -64,14 +64,16 @@ function Licenses() {
   return (
     <>
       <WebAwesomeLoader />
-      <LicensesPage
+      <main>
+        <LicensesPage
         groups={[
           {
             title: "Open source libraries",
             entries: [...baseCredits, ...extraCredits],
           },
         ]}
-      />
+        />
+      </main>
     </>
   );
 }
