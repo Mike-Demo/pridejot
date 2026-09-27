@@ -73,6 +73,20 @@ function Licenses() {
           },
         ]}
         />
+        <section className="wa-licenses wa-licenses-group" aria-label="Source code">
+          <h2>Open source</h2>
+          <p className="wa-licenses-lede">
+            This site&apos;s source code is on GitHub:{" "}
+            <a
+              className="wa-licenses-entry-link"
+              href="https://github.com/Mike-Demo/pridejot"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Mike-Demo/pridejot
+            </a>
+          </p>
+        </section>
       </main>
     </>
   );
