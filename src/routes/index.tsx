@@ -245,6 +245,47 @@ function StartScreen() {
             {message}
           </WaCallout>
         ) : null}
+
+        <section
+          className="wa-stack wa-gap-l"
+          aria-label="About Queerboard"
+          style={{ maxWidth: "42rem", textAlign: "left" }}
+        >
+          <div>
+            <h2 className="wa-heading-l" style={{ margin: 0 }}>
+              What is Queerboard?
+            </h2>
+            <p className="wa-body-m">
+              Queerboard is a shared idea whiteboard built for pride events, team meetings,
+              and conference rooms. One person starts a board and puts it on the big screen;
+              everyone else joins from their phone to add sticky notes, drag them around,
+              and vote with hearts. New ideas and votes appear live as people submit them.
+            </p>
+          </div>
+          <div>
+            <h2 className="wa-heading-l" style={{ margin: 0 }}>
+              Who it's for
+            </h2>
+            <p className="wa-body-m">
+              Meeting facilitators running brainstorms and retrospectives, employee resource
+              groups and pride organizers collecting ideas from a crowd, conference speakers
+              running a live question wall, and teachers gathering responses from a
+              classroom. If you've got a room full of people and a screen, Queerboard gives
+              everyone in it a voice.
+            </p>
+          </div>
+          <div>
+            <h2 className="wa-heading-l" style={{ margin: 0 }}>
+              Key features
+            </h2>
+            <ul className="wa-body-m" style={{ margin: 0, paddingInlineStart: "1.25rem" }}>
+              <li>Real-time sticky notes and heart votes — no refresh needed.</li>
+              <li>Join by room code or QR code — no account, no app to install.</li>
+              <li>Boards close automatically after 24 hours; nothing is saved.</li>
+              <li>Export a finished board as an image or PDF to share with the room.</li>
+            </ul>
+          </div>
+        </section>
       </div>
 
       <div slot="footer" className="wa-stack wa-gap-s wa-align-items-center">
