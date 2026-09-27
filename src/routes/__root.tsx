@@ -29,6 +29,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "MikeDemo" },
       // Bing Webmaster Tools site verification (account-level code).
       { name: "msvalidate.01", content: "C46BBA52678FF98E0C7403B8F571606E" },
+      // Google Search Console site verification.
+      { name: "google-site-verification", content: "gV8CTGtx142z4OFMpV-MY4cp70Wtr-hgsKMxvO30rI8" },
       { property: "og:title", content: "Queerboard" },
       {
         property: "og:description",
