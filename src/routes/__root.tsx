@@ -27,6 +27,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "A pride-themed group idea whiteboard for the conference room — everyone adds sticky notes, drags them around, and votes. Nothing is saved.",
       },
       { name: "author", content: "MikeDemo" },
+      // Bing Webmaster Tools site verification (account-level code).
+      { name: "msvalidate.01", content: "C46BBA52678FF98E0C7403B8F571606E" },
       { property: "og:title", content: "Queerboard" },
       {
         property: "og:description",
