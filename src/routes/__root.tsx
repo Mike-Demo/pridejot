@@ -39,15 +39,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         // Tightest policy that allows every resource the app actually loads:
         // self-hosted bundles, inline TanStack Start bootstrap/hydration
         // scripts, SSR style attributes, jsDelivr (Web Awesome + Font Awesome
-        // CSS, webfonts, icon SVGs), and the Supabase project API.
+        // CSS, webfonts, icon SVGs), the Supabase project API, and the
+        // umami-lite private analytics tracker.
         httpEquiv: "Content-Security-Policy",
         content: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline'",
+          "script-src 'self' 'unsafe-inline' https://umami-lite.view.fast",
           "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
           "img-src 'self' data:",
           "font-src 'self' https://cdn.jsdelivr.net",
-          "connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co",
+          "connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co https://umami-lite.view.fast",
           "form-action 'self'",
           "base-uri 'self'",
           "object-src 'none'",
@@ -72,6 +73,12 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" className={WEB_AWESOME_HTML_CLASSES}>
       <head>
         <HeadContent />
+        {/* Private analytics tracker: umami-lite, loads on every page. */}
+        <script
+          defer
+          src="https://umami-lite.view.fast/tracker.js"
+          data-website-id="7fa759f7-02f5-41ac-ad7b-7a9424434f2e"
+        ></script>
       </head>
       <body>
         {children}
