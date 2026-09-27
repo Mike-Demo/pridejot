@@ -35,6 +35,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        // Tightest policy that allows every resource the app actually loads:
+        // self-hosted bundles, inline TanStack Start bootstrap/hydration
+        // scripts, SSR style attributes, jsDelivr (Web Awesome + Font Awesome
+        // CSS, webfonts, icon SVGs), and the Supabase project API.
+        httpEquiv: "Content-Security-Policy",
+        content: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline'",
+          "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net",
+          "img-src 'self' data:",
+          "font-src 'self' https://cdn.jsdelivr.net",
+          "connect-src 'self' https://cdn.jsdelivr.net https://*.supabase.co",
+          "form-action 'self'",
+          "base-uri 'self'",
+          "object-src 'none'",
+          "upgrade-insecure-requests",
+        ].join("; "),
+      },
     ],
     links: [
       { rel: "stylesheet", href: WEB_AWESOME_STYLE_URL },
