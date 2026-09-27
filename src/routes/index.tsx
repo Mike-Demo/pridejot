@@ -172,6 +172,7 @@ function StartScreen() {
       <WebAwesomeLoader />
       <div className="pride-rainbow-bar" slot="subheader" aria-hidden="true" />
 
+      <main>
       <div className="wa-stack wa-gap-xl wa-align-items-center wa-padding-2xl">
         <h1
           className="wa-heading-2xl wa-cluster wa-gap-s wa-align-items-center"
@@ -287,6 +288,7 @@ function StartScreen() {
           </div>
         </section>
       </div>
+      </main>
 
       <div slot="footer" className="wa-stack wa-gap-s wa-align-items-center">
         <PrivacyBadge />
