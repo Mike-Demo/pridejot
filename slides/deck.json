@@ -1,0 +1,183 @@
+{
+  "boltSlidesVersion": 1,
+  "boltSlidesId": "11011050-f9d6-4d43-8a9e-3e43af51bbaf",
+  "deck": {
+    "title": "PrideJot — jot the good stuff",
+    "transition": "fade",
+    "font": "manrope",
+    "accent": "#ff5ea8"
+  },
+  "slides": [
+    {
+      "id": "s1",
+      "position": 0,
+      "layout": "cover",
+      "props": {
+        "kicker": "PrideJot · a micro-journal for the LGBTQ+ community",
+        "title": "Jot the ==good stuff==.",
+        "subtitle": "A pocket journal for {c:#ffb86b}queer joy{/c} — the small wins, the moments of {c:#7fe3c3}euphoria{/c}, the {c:#7cc4ff}belonging{/c}.",
+        "foot": "github.com/Mike-Demo/pridejot"
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Open warm. PrideJot is a joyful micro-journal made for the LGBTQ+ community — the whole deck argues that queer joy deserves a home of its own.",
+      "status": "none"
+    },
+    {
+      "id": "s2",
+      "position": 1,
+      "layout": "statement",
+      "props": {
+        "kicker": "The problem",
+        "title": "Journaling apps feel ==clinical==. Queer joy has ==nowhere to go==.",
+        "body": "The small daily wins — moments of euphoria, belonging, chosen family — deserve a home of their own, not another homework assignment."
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Name the gap: mainstream journaling tools are heavy or clinical, and the small bright moments of queer life rarely get captured anywhere.",
+      "status": "none"
+    },
+    {
+      "id": "s3",
+      "position": 2,
+      "layout": "pillars",
+      "props": {
+        "title": "A pocket journal for ==tiny, bright entries==.",
+        "items": [
+          { "title": "A moment", "body": "One bright thing from today, captured in seconds — not essays." },
+          { "title": "A mood", "body": "Name the feeling, keep the memory." },
+          { "title": "A gratitude", "body": "Tiny thanks that add up, day after day." }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "What it does: three entry shapes — a moment, a mood, a gratitude. The pitch is speed: seconds, not essays.",
+      "status": "none"
+    },
+    {
+      "id": "s4",
+      "position": 3,
+      "layout": "steps",
+      "props": {
+        "kicker": "How it works",
+        "title": "Open. Jot. ==Done==.",
+        "items": [
+          { "title": "Open", "body": "One tap from wherever you are straight to the page." },
+          { "title": "Jot a line or two", "body": "No prompts, no pressure, no blank-page dread." },
+          { "title": "Tag the feeling", "body": "Joy, pride, calm, mischief — your words." },
+          { "title": "Come back anytime", "body": "Browse your bright spots whenever you need a lift." }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Walk the loop: open, jot a line, tag the feeling, done. Returning matters as much as writing — browsing past bright spots is the payoff.",
+      "status": "none"
+    },
+    {
+      "id": "s5",
+      "position": 4,
+      "layout": "contrast",
+      "props": {
+        "kicker": "Made with pride",
+        "title": "Your pace. ==Your story==.",
+        "left": {
+          "label": "Typical journaling apps",
+          "title": "Clinical or heavy",
+          "points": [
+            "Long prompts and blank-page pressure",
+            "Streaks that guilt you for missing a day",
+            "Design that reads like a medical chart"
+          ]
+        },
+        "right": {
+          "label": "PrideJot",
+          "title": "Rainbow warmth throughout",
+          "points": [
+            "Affirming language that meets you where you are",
+            "Zero streak-shaming — your pace, your story",
+            "Built for and by the LGBTQ+ community"
+          ]
+        }
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "The values slide: rainbow warmth, affirming language, zero streak-shaming. PrideJot is deliberately the opposite of the guilt-driven habit tracker.",
+      "status": "none"
+    },
+    {
+      "id": "s6",
+      "position": 5,
+      "layout": "bento",
+      "props": {
+        "kicker": "Key features",
+        "title": "Small app, ==big warmth==.",
+        "tiles": [
+          { "k": "Fast", "title": "Seconds, not essays", "body": "Capture a bright moment before it slips away.", "c": 2, "variant": "accent" },
+          { "k": "Tags", "title": "Feeling tags", "body": "Find every moment of pride, joy, or calm in one tap.", "c": 2 },
+          { "k": "Private", "title": "Yours alone", "body": "Your story stays yours — no feeds, no followers.", "c": 2 },
+          { "k": "Bright spots", "title": "A shelf of good days", "body": "Browse past wins whenever you need a lift.", "c": 3 },
+          { "k": "Voice", "title": "Affirming language", "body": "Words written with the community, not at it.", "c": 3, "variant": "glow" }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Skim the feature grid — speed, feeling tags, privacy, the bright-spots view, affirming language. Don't read every tile; pick two and move on.",
+      "status": "none"
+    },
+    {
+      "id": "s7",
+      "position": 6,
+      "layout": "statGrid",
+      "props": {
+        "kicker": "Status",
+        "title": "Working app. ==Open source==. Yours.",
+        "stats": [
+          { "value": "0", "label": "streaks to maintain", "caption": "no guilt mechanics, ever" },
+          { "value": "1", "label": "line is enough", "caption": "micro-journaling by design" },
+          { "value": "100%", "label": "free and open source", "caption": "read it, fork it, make it yours" },
+          { "value": "24/7", "label": "your bright spots", "caption": "always in your pocket" }
+        ]
+      },
+      "background": { "type": "color", "color": "var(--bg)" },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Status: PrideJot is a working app today, fully open source on GitHub. Invite people to try it or contribute.",
+      "status": "none"
+    },
+    {
+      "id": "s8",
+      "position": 7,
+      "layout": "cover",
+      "props": {
+        "kicker": "Come build the brightness",
+        "title": "PrideJot — jot the ==good stuff==.",
+        "subtitle": "Open source and welcoming new contributors, ideas, and bright moments.",
+        "foot": "github.com/Mike-Demo/pridejot"
+      },
+      "background": {
+        "type": "gradient",
+        "from": "#1a0b1e",
+        "to": "#06080d",
+        "angle": 160
+      },
+      "animation": "cascade",
+      "transition": null,
+      "nav": null,
+      "notes": "Close with the repo link — github.com/Mike-Demo/pridejot. Thank the room and invite them to jot their first bright spot tonight.",
+      "status": "none"
+    }
+  ]
+}

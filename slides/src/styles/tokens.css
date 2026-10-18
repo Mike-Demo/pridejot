@@ -1,0 +1,64 @@
+/* ===================================================================
+   THEME TOKENS — PrideJot: dark celebratory theme with rainbow and
+   pink accents. Values only; names match the engine vocabulary.
+   =================================================================== */
+:root {
+  /* Surfaces — atmosphere / glow mix from --accent so a deck accent
+     override retints washes without rewriting these. */
+  --bg: #140a12;
+  --bg-grad-1: color-mix(in srgb, var(--accent) 10%, transparent);
+  --bg-grad-2: color-mix(in srgb, var(--accent) 6%, transparent);
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-2: rgba(255, 255, 255, 0.075);
+
+  /* Ink — tuned for AA contrast on the plum background */
+  --fg: #faf5f8;
+  --fg-muted: #c9b8c6;
+  --fg-faint: #9c8a9a;
+
+  /* Hairlines */
+  --hair: rgba(255, 255, 255, 0.12);
+  --hair-2: rgba(255, 255, 255, 0.07);
+
+  /* Accent — ONE accent, SOLID (no gradients). PrideJot pink. */
+  --primary: #ff5ea8;
+  --accent: #ff5ea8;
+  --accent-ink: #2a0817;
+
+  /* Pride rainbow — supporting hues used sparingly via {c:…} rich text */
+  --pride-red: #ff7a6b;
+  --pride-orange: #ffb86b;
+  --pride-yellow: #ffe07a;
+  --pride-green: #7fe3c3;
+  --pride-blue: #7cc4ff;
+  --pride-violet: #c9a0ff;
+
+  /* Radius — friendly and rounded */
+  --radius: 24px;
+  --radius-sm: 14px;
+  --radius-lg: 30px;
+
+  /* Depth */
+  --shadow: 0 50px 120px -50px rgba(0, 0, 0, 0.9);
+  --glow: 0 30px 80px -40px color-mix(in srgb, var(--accent) 45%, transparent);
+
+  /* Type — friendly rounded pairing */
+  --font-head: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+    sans-serif;
+  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+    sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Motion */
+  --dur: 0.4s;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Atmosphere */
+  --grain: 0.035;
+  --vignette: rgba(0, 0, 0, 0.22);
+
+  /* Responsive gutter — fluid side / vertical padding */
+  --gutter: clamp(28px, 6vw, 120px);
+  --gutter-y: clamp(40px, 8vh, 96px);
+}
