@@ -67,7 +67,7 @@ export function Whiteboard({ board }: WhiteboardProps) {
   /* Initial load. */
   useEffect(() => {
     let cancelled = false;
-    listNotes(board.id)
+    listNotes(board.id, board.code)
       .then((rows) => {
         if (!cancelled) setNotes(rows);
       })
@@ -80,43 +80,38 @@ export function Whiteboard({ board }: WhiteboardProps) {
     return () => {
       cancelled = true;
     };
-  }, [board.id]);
+  }, [board.id, board.code]);
 
   /* Live updates from every other phone and screen on this board. */
   useEffect(() => {
+    let cancelled = false;
     const channel = supabase
-      .channel(`board-${board.id}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notes", filter: `board_id=eq.${board.id}` },
-        (payload) => {
-          if (payload.eventType === "DELETE") {
-            const removed = payload.old as { id?: string };
-            if (!removed.id) return;
-            setNotes((prev) => prev.filter((n) => n.id !== removed.id));
-            setEditingId((current) => (current === removed.id ? null : current));
-            return;
-          }
-          const row = payload.new as BoardNote;
-          setNotes((prev) => {
-            const exists = prev.some((n) => n.id === row.id);
-            if (!exists) return [...prev, row];
-            return prev.map((n) => {
-              if (n.id !== row.id) return n;
-              /* Keep what this person is typing or dragging right now. */
-              const mine = editingIdRef.current === row.id || dragRef.current?.id === row.id;
-              return mine ? { ...row, x: n.x, y: n.y, text: n.text } : row;
-            });
-          });
-        },
-      )
+      .channel(`board-${board.id}-${board.code}`, { config: { private: true } })
+      .on("broadcast", { event: "notes_changed" }, () => {
+        listNotes(board.id, board.code)
+          .then((rows) => {
+            if (cancelled) return;
+            setNotes((prev) =>
+              rows.map((row) => {
+                const current = prev.find((note) => note.id === row.id);
+                if (!current) return row;
+                /* Keep what this person is typing or dragging right now. */
+                const mine =
+                  editingIdRef.current === row.id || dragRef.current?.id === row.id;
+                return mine ? { ...row, x: current.x, y: current.y, text: current.text } : row;
+              }),
+            );
+          })
+          .catch(failed);
+      })
       .subscribe((status) => {
         setLive(status === "SUBSCRIBED");
       });
     return () => {
+      cancelled = true;
       void supabase.removeChannel(channel);
     };
-  }, [board.id]);
+  }, [board.id, board.code, failed]);
 
   const addNoteAt = (clientX: number, clientY: number) => {
     const boardEl = boardRef.current;
@@ -131,7 +126,7 @@ export function Whiteboard({ board }: WhiteboardProps) {
       text: "",
       hearts: 0,
     };
-    insertNote(draft)
+    insertNote(board.code, draft)
       .then((note) => {
         setNotes((prev) => (prev.some((n) => n.id === note.id) ? prev : [...prev, note]));
         setEditingId(note.id);
@@ -181,7 +176,7 @@ export function Whiteboard({ board }: WhiteboardProps) {
     const now = Date.now();
     if (now - drag.lastSync > DRAG_SYNC_MS) {
       drag.lastSync = now;
-      void patchNote(drag.id, { x, y }).catch(() => undefined);
+      void patchNote(board.code, drag.id, { x, y }).catch(() => undefined);
     }
   };
 
@@ -191,19 +186,19 @@ export function Whiteboard({ board }: WhiteboardProps) {
     if (!drag?.moved) return;
     const note = notes.find((n) => n.id === drag.id);
     if (!note) return;
-    void patchNote(note.id, { x: note.x, y: note.y }).catch(failed);
+    void patchNote(board.code, note.id, { x: note.x, y: note.y }).catch(failed);
   };
 
   const addHeart = (note: BoardNote) => {
     const hearts = note.hearts + 1;
     setNotes((prev) => prev.map((n) => (n.id === note.id ? { ...n, hearts } : n)));
-    void patchNote(note.id, { hearts }).catch(failed);
+    void patchNote(board.code, note.id, { hearts }).catch(failed);
   };
 
   const removeNote = (id: string) => {
     setNotes((prev) => prev.filter((n) => n.id !== id));
     setEditingId((current) => (current === id ? null : current));
-    void deleteNote(id).catch(failed);
+    void deleteNote(board.code, id).catch(failed);
   };
 
   const updateText = (id: string, text: string) => {
@@ -214,13 +209,13 @@ export function Whiteboard({ board }: WhiteboardProps) {
     const note = notes.find((n) => n.id === id);
     setEditingId(null);
     if (!note) return;
-    void patchNote(id, { text: note.text }).catch(failed);
+    void patchNote(board.code, id, { text: note.text }).catch(failed);
   };
 
   const clearBoard = () => {
     setNotes([]);
     setEditingId(null);
-    void clearBoardNotes(board.id).catch(failed);
+    void clearBoardNotes(board.id, board.code).catch(failed);
   };
 
   const runExport = async (format: "png" | "pdf") => {
