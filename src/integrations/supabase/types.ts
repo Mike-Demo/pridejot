@@ -87,6 +87,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      board_is_live: { Args: { p_board_id: string }; Returns: boolean }
+      get_board_by_code: {
+        Args: { p_code: string }
+        Returns: {
+          code: string
+          expires_at: string
+          id: string
+        }[]
+      }
       delete_expired_boards: { Args: never; Returns: undefined }
     }
     Enums: {
