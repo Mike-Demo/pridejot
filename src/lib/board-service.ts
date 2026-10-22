@@ -38,12 +38,13 @@ export function normalizeCode(input: string): string {
 
 export async function createBoard(): Promise<Board> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const { data, error } = await supabase
-      .from("boards")
-      .insert({ code: randomCode() })
-      .select("id, code, expires_at")
-      .single();
-    if (!error && data) return data;
+    const code = randomCode();
+    const { error } = await supabase.from("boards").insert({ code });
+    if (!error) {
+      const board = await getBoardByCode(code);
+      if (board) return board;
+      throw new Error("Could not start a new board");
+    }
     /* 23505 = unique violation: the generated code was taken, try another. */
     if (error && error.code !== "23505") throw error;
   }
@@ -51,11 +52,9 @@ export async function createBoard(): Promise<Board> {
 }
 
 export async function getBoardByCode(code: string): Promise<Board | null> {
-  const { data, error } = await supabase
-    .from("boards")
-    .select("id, code, expires_at")
-    .eq("code", normalizeCode(code))
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("get_board_by_code", {
+    p_code: normalizeCode(code),
+  }).maybeSingle();
   if (error) throw error;
   return data;
 }
