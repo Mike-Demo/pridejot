@@ -38,11 +38,7 @@ export function normalizeCode(input: string): string {
 
 export async function createBoard(): Promise<Board> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const { data, error } = await supabase
-      .from("boards")
-      .insert({ code: randomCode() })
-      .select("id, code, expires_at")
-      .single();
+    const { data, error } = await supabase.rpc("board_create", { p_code: randomCode() }).single();
     if (!error && data) return data;
     /* 23505 = unique violation: the generated code was taken, try another. */
     if (error && error.code !== "23505") throw error;
@@ -52,50 +48,64 @@ export async function createBoard(): Promise<Board> {
 
 export async function getBoardByCode(code: string): Promise<Board | null> {
   const { data, error } = await supabase
-    .from("boards")
-    .select("id, code, expires_at")
-    .eq("code", normalizeCode(code))
+    .rpc("board_get_by_code", { p_code: normalizeCode(code) })
     .maybeSingle();
   if (error) throw error;
   return data;
 }
 
-export async function listNotes(boardId: string): Promise<BoardNote[]> {
-  const { data, error } = await supabase
-    .from("notes")
-    .select("id, board_id, x, y, rotation, color_index, text, hearts")
-    .eq("board_id", boardId)
-    .order("created_at", { ascending: true });
+export async function listNotes(boardId: string, code: string): Promise<BoardNote[]> {
+  const { data, error } = await supabase.rpc("board_list_notes", {
+    p_board_id: boardId,
+    p_code: code,
+  });
   if (error) throw error;
   return data ?? [];
 }
 
 export async function insertNote(
+  code: string,
   note: Omit<BoardNote, "id"> & { readonly id?: string },
 ): Promise<BoardNote> {
   const { data, error } = await supabase
-    .from("notes")
-    .insert(note)
-    .select("id, board_id, x, y, rotation, color_index, text, hearts")
+    .rpc("board_insert_note", {
+      p_code: code,
+      p_board_id: note.board_id,
+      p_id: note.id ?? null,
+      p_x: note.x,
+      p_y: note.y,
+      p_rotation: note.rotation,
+      p_color_index: note.color_index,
+      p_text: note.text,
+      p_hearts: note.hearts,
+    })
     .single();
   if (error) throw error;
   return data;
 }
 
 export async function patchNote(
+  code: string,
   id: string,
   patch: Partial<Pick<BoardNote, "x" | "y" | "text" | "hearts">>,
 ): Promise<void> {
-  const { error } = await supabase.from("notes").update(patch).eq("id", id);
+  const { error } = await supabase.rpc("board_update_note", {
+    p_code: code,
+    p_note_id: id,
+    p_x: patch.x ?? null,
+    p_y: patch.y ?? null,
+    p_text: patch.text ?? null,
+    p_hearts: patch.hearts ?? null,
+  });
   if (error) throw error;
 }
 
-export async function deleteNote(id: string): Promise<void> {
-  const { error } = await supabase.from("notes").delete().eq("id", id);
+export async function deleteNote(code: string, id: string): Promise<void> {
+  const { error } = await supabase.rpc("board_delete_note", { p_code: code, p_note_id: id });
   if (error) throw error;
 }
 
-export async function clearBoardNotes(boardId: string): Promise<void> {
-  const { error } = await supabase.from("notes").delete().eq("board_id", boardId);
+export async function clearBoardNotes(boardId: string, code: string): Promise<void> {
+  const { error } = await supabase.rpc("board_clear_notes", { p_board_id: boardId, p_code: code });
   if (error) throw error;
 }

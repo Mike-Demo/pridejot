@@ -87,6 +87,63 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      board_clear_notes: { Args: { p_board_id: string; p_code: string }; Returns: undefined }
+      board_create: {
+        Args: { p_code: string }
+        Returns: { code: string; expires_at: string; id: string }[]
+      }
+      board_delete_note: { Args: { p_code: string; p_note_id: string }; Returns: undefined }
+      board_get_by_code: {
+        Args: { p_code: string }
+        Returns: { code: string; expires_at: string; id: string }[]
+      }
+      board_insert_note: {
+        Args: {
+          p_board_id: string
+          p_code: string
+          p_color_index: number
+          p_hearts: number
+          p_id: string | null
+          p_rotation: number
+          p_text: string
+          p_x: number
+          p_y: number
+        }
+        Returns: {
+          board_id: string
+          color_index: number
+          hearts: number
+          id: string
+          rotation: number
+          text: string
+          x: number
+          y: number
+        }[]
+      }
+      board_list_notes: {
+        Args: { p_board_id: string; p_code: string }
+        Returns: {
+          board_id: string
+          color_index: number
+          hearts: number
+          id: string
+          rotation: number
+          text: string
+          x: number
+          y: number
+        }[]
+      }
+      board_update_note: {
+        Args: {
+          p_code: string
+          p_hearts?: number | null
+          p_note_id: string
+          p_text?: string | null
+          p_x?: number | null
+          p_y?: number | null
+        }
+        Returns: undefined
+      }
       delete_expired_boards: { Args: never; Returns: undefined }
     }
     Enums: {
